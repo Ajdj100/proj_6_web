@@ -5,6 +5,29 @@
 <link rel="stylesheet" href="./styles.css">
 <html>
 
+<style>
+    #container {
+    margin-left: 30px;
+    margin-right: 30px;
+    }
+
+    #buttonRow {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    padding-left: 20px;
+    padding-right: 20px;
+    }
+    #articles {
+    margin-bottom: 20px;
+    }
+
+    #loginCont {
+    margin-top: 20px;
+    }
+</style>
+
 <body>
     <div id="container">
         <h1 class="headerText">Header font</h1>
@@ -42,6 +65,10 @@
             </div>
         </div>
         <a href="#">This is a link to somewhere</a>
+        <div id="loginCont">
+            <input type="text" placeholder="username">
+            <input type="password" placeholder="password">
+        </div>
     </div>
 </body>
 
