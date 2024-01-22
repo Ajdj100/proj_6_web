@@ -93,6 +93,8 @@ a {
   font-weight: 300;
   font-style: normal;
   text-decoration-thickness: 1px;
+  text-decoration: underline;
+  cursor: pointer;
 }
 i {
   font-size: 3rem;
