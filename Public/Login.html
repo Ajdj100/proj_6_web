@@ -6,18 +6,78 @@
 
 <html>
 
-<style>
+<script>
+    function login() {
+
+    }
+
+    function signup() {
+
+    }
+
+    function showSignUp() {
+        var loginForm = document.getElementById('login');
+        loginForm.style.transition = "opacity 0.3s, transform 0.3s";
+        loginForm.style.opacity = 0;
+        loginForm.style.transform = "translateX(-100%)";
+
+        var signupForm = document.getElementById('signup');
+        signupForm.style.transition = "opacity 0.3s, transform 0.3s";
+        signupForm.style.opacity = 1;
+        signupForm.style.transform = "translateX(-50%)";
+    }
+
+    function showLogin() {
+        var loginForm = document.getElementById('login');
+        loginForm.style.transition = "opacity 0.3s, transform 0.3s";
+        loginForm.style.opacity = 1;
+        loginForm.style.transform = "translateX(50%)";
+
+        var signupForm = document.getElementById('signup');
+        signupForm.style.transition = "opacity 0.3s, transform 0.3s";
+        signupForm.style.opacity = 0;
+        signupForm.style.transform = "translateX(100%)";
+    }
+</script>
+
+
+<style scoped>
     #container {
         display: flex;
         flex-direction: column;
         justify-content: center;
         align-items: center;
+        height: 90%
     }
-    #input {
+
+    .input {
         display: flex;
         flex-direction: column;
         max-width: 350px;
         max-height: 500px;
+        align-items: center;
+        margin-top: 40px;
+    }
+
+    .input>input {
+        margin: 5px;
+    }
+
+    .input :nth-child(4) {
+        margin-top: 25px;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    #signUpButton {
+        margin-top: 30px
+    }
+
+    #innerContainer {
+        display: flex;
+        flex-direction: row;
         align-items: center;
     }
 </style>
@@ -25,11 +85,23 @@
 <body>
     <div id="container">
         <h1>App Title</h1>
-        <form id="input">
-            <input type="text" id="username" placeholder="Username">
-            <input type="password" id="password" placeholder="Password">
-        </form>
-        <a href="#">Sign Up</a>
+        <div id="innerContainer">
+            <div class="input" id="login" style="transform: translateX(50%);">
+                <h3>Log In</h3>
+                <input type="text" id="username" placeholder="Username">
+                <input type="password" id="password" placeholder="Password">
+                <i class="bi bi-arrow-right-circle-fill" style="font-size: 3rem; " onclick="login()"></i>
+                <a id="signUpButton" onclick="showSignUp()">Sign Up</a>
+            </div>
+
+            <div class="input" id="signup" style="transform: translateX(50%); opacity: 0;">
+                <h3>Sign Up</h3>
+                <input type="text" id="newUsername" placeholder="Username">
+                <input type="password" id="newPassword" placeholder="Password">
+                <i class="bi bi-arrow-right-circle-fill" style="font-size: 3rem; " onclick="login()"></i>
+                <a id="signUpButton" onclick="showLogin()">Log In</a>
+            </div>
+        </div>
     </div>
 </body>
 
