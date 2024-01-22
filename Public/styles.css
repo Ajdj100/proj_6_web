@@ -8,8 +8,10 @@
 }
 
 body {
-  /* background-color: #F8F5F2; */
   background-color: #f7f7f7;
+  max-width: 1800px;
+  display: flex;
+  flex-direction: column;
 }
 
 button {
