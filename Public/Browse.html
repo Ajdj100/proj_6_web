@@ -120,8 +120,10 @@
         window.location.href = `./${location}.html`
     }
 
-    function showProfileOptions() {
+    function logout() {
+        //TODO: implement login caching and clearing
 
+        window.location.href = './Login.html';
     }
 </script>
 
@@ -131,12 +133,16 @@
     <div id="header">
         <div id="headerContent">
 
-            <i class="bi bi-sticky-fill" style="font-size: 3.5rem; cursor: pointer;"
+            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
                 onclick="navigateTo('CreatePost')"></i>
             <h1>Website Title</h1>
-            <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i>
+            <!-- <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i> -->
+            <a href="#" onclick="logout()">logout</a>
         </div>
         <!-- <hr> -->
+        <!-- <div id="profileDropdown">
+            <a>My Posts</a>
+        </div> -->
 
     </div>
     <h2>Articles</h2>
