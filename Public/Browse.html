@@ -93,7 +93,7 @@
 
 <script>
     async function getArticles() {
-        const res = await fetch("https://poetrydb.org/random/100");
+        const res = await fetch("https://poetrydb.org/random/5");
         const data = await res.json();
         return data;
     }
@@ -106,10 +106,17 @@
         document.getElementById('loader').style.display = 'none';
         data.forEach(element => {
             let content = element.lines.toString().substring(0, 200);
-            
+
             const body = `<h3>${element.title}</h3><p>${content.substring(0, content.lastIndexOf(' '))}...</p>`
             let row = table.insertRow();
             row.innerHTML = body;
+            row.style.cursor = 'pointer';
+
+            // add event listener for click
+            row.addEventListener("click", () => {
+                // navigate to article page
+                window.location.href = `./Article.html/${element.title}`;
+            });
         });
     }
 </script>
