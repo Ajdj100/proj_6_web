@@ -89,6 +89,10 @@
             height: 32px;
         }
     }
+
+    .article {
+        margin-bottom: 50px;
+    }
 </style>
 
 <script>
@@ -106,16 +110,9 @@
         data.forEach(element => {
             let content = element.lines.toString().substring(0, 200);
 
-            const body = `<h2>${element.title}</h2><h4>${element.author}</h4><p>${content.substring(0, content.lastIndexOf(' '))}...</p>`
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.title}')"><h2>${element.title}</h2><h4>${element.author}</h4><p>${content.substring(0, content.lastIndexOf(' '))}...</p></div>`
             let row = table.insertRow();
             row.innerHTML = body;
-            row.style.cursor = 'pointer';
-
-            // add event listener for click
-            row.addEventListener("click", () => {
-                // navigate to article page
-                window.location.href = `./Article.html?article=${element.title}`;
-            });
         });
     }
 
@@ -134,7 +131,8 @@
     <div id="header">
         <div id="headerContent">
 
-            <i class="bi bi-sticky-fill" style="font-size: 3.5rem; cursor: pointer;" onclick="navigateTo('CreatePost')"></i>
+            <i class="bi bi-sticky-fill" style="font-size: 3.5rem; cursor: pointer;"
+                onclick="navigateTo('CreatePost')"></i>
             <h1>Website Title</h1>
             <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i>
         </div>
@@ -145,8 +143,7 @@
     <div id="content">
         <div id="articles">
             <table id="browseTable">
-                <tb>
-                </tb>
+
             </table>
             <script>
                 populateBrowse();
