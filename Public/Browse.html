@@ -1,12 +1,92 @@
-Browse
+<link rel="stylesheet" href="./styles.css">
+
+<style scoped>
+    #headerContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 50px;
+        padding-right: 50px;
+    }
+
+    #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-top: 10px;
+        background-color: inherit;
+        filter: drop-shadow(0px 1px 10px #0000003d);
+    }
+
+    h1 {
+        font-size: 55px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #content {
+        max-width: 1000px;
+    }
+</style>
+
+<script>
+    async function getArticles() {
+        const res = await fetch("https://poetrydb.org/random/10");
+        const data = await res.json();
+        return data;
+    }
+
+    async function populateBrowse() {
+        const data = await getArticles();
+        console.log(data);
+        const table = document.getElementById("browseTable");
+        data.forEach(element => {
+            let content = element.lines.toString().substring(0, 200);
+
+            const body = `<h3>${element.title}</h3><p>${content.substring(0, content.lastIndexOf(' '))}...</p>`
+            let row = table.insertRow();
+            row.innerHTML = body;
+        });
+    }
+</script>
 
 <html>
 
 <body>
+    <div id="header">
+        <div id="headerContent">
 
-    <div>
-        
+            <i class="bi bi-sticky-fill" style="font-size: 3.5rem;"></i>
+            <h1>Website Title</h1>
+            <i class="bi bi-person-fill" style="font-size: 4rem;"></i>
+        </div>
+        <!-- <hr> -->
     </div>
+    <h2>Articles</h2>
+    <div id="content">
+        <div id="articles">
+            <table id="browseTable">
+                <tb>
+                </tb>
+            </table>
+            <script>
+                populateBrowse();
+            </script>
+        </div>
+    </div>
+
 
 </body>
 
