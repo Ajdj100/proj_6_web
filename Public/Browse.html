@@ -115,9 +115,13 @@
             // add event listener for click
             row.addEventListener("click", () => {
                 // navigate to article page
-                window.location.href = `./Article.html/${element.title}`;
+                window.location.href = `./Article.html?article=${element.title}`;
             });
         });
+    }
+
+    function navigateTo(location) {
+        window.location.href = `./${location}.html`
     }
 </script>
 
@@ -127,7 +131,7 @@
     <div id="header">
         <div id="headerContent">
 
-            <i class="bi bi-sticky-fill" style="font-size: 3.5rem;"></i>
+            <i class="bi bi-sticky-fill" style="font-size: 3.5rem; cursor: pointer;" onclick="navigateTo('CreatePost')"></i>
             <h1>Website Title</h1>
             <i class="bi bi-person-fill" style="font-size: 4rem;"></i>
         </div>
