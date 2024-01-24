@@ -100,7 +100,6 @@
 
     async function populateBrowse() {
         const data = await getArticles();
-        console.log(data);
         const table = document.getElementById("browseTable");
 
         document.getElementById('loader').style.display = 'none';
