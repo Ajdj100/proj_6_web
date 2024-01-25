@@ -1,8 +1,9 @@
+import string
 import mysql.connector
 import requests
 import json
-from sys import sys
-from random import randint
+import sys
+from random import choice
 
 if __name__ == "__main__":
     # Throw exception if no argument given
@@ -13,36 +14,53 @@ if __name__ == "__main__":
     
     # Read connection file
     conn_file = open("connection.txt")
-    host = "localhost"
+    host_name = "localhost"
     db_name = "webproject"
     
     # Connect to DB
-    db = mysql.connector(host, conn_file.readline(), conn_file.readline(), db_name)
-    cursor = db.cursor()
+    db = mysql.connector.connect(
+        host=host_name, 
+        user=conn_file.readline(), 
+        password=conn_file.readline(), 
+        database=db_name
+    )
     conn_file.close()
+    cursor = db.cursor()
 
     # Request random poems from API 
-    url = "https://poetrydb.org/random/" + numNewRows
-    res = requests.get(url)
-    res_json = json.loads(res.json())
-
-    if res.status_code != 200:
-        print("Error, received " + res.status_code + " status code.")
-        print("Response JSON: " + res_json) 
-        exit(-1)
+    max_lines = '4'
+    url = "https://poetrydb.org/linecount/" + max_lines
 
     # Get user IDs from DB
-    user_query = "SELECT userID from user;"
+    user_query = "SELECT user_id from user;"
     cursor.execute(user_query) 
     user_id = cursor.fetchall()
      
     # Insert each poem to database with random user
-    for i in range(numNewRows):
-        insert_query = "INSERT INTO posts (userID, title, body) VALUES (%s, %s, %s)"
-        rand_id = randint(user_id)
-        title = res_json[i]["title"]
-        body = "".join(res_json[i]["lines"])
-        values = (rand_id, title, body)
+    for i in range(int(numNewRows)):
+        res = requests.get(url)
+        res_json = res.json()
+
+        if res.status_code != 200:
+            print("Error, received " + res.status_code + " status code.")
+            print("Response JSON: " + res_json) 
+            exit(-1)
+
+        # Get random user
+        user_choice = choice(user_id)
+        rand_user = int(user_choice[0])
+
+        # Get title and body from random poem
+        poem_choice = choice(res_json)
+        title = poem_choice["title"]
+        body = "I really like this poem:\n\n"
+        body += "\n".join(poem_choice["lines"])
+
+        # Execute query given values
+        insert_query = "INSERT INTO post (user_id_fk, title, body) VALUES (%s, %s, %s)"
+        values = (rand_user, title, body)
         cursor.execute(insert_query, values)
     
-    print("Rows have been added to database.")
+    db.commit()
+    cursor.close()
+    db.close()
