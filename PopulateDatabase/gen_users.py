@@ -6,7 +6,7 @@ import sys
 if __name__ == "__main__":
     # Throw exception if no argument given
     try:
-        numNewUsers = int(sys.argv[1])
+        user_count = int(sys.argv[1])
     except:
         raise Exception("Error, expected a command line argument for the number of new rows.")
     
@@ -32,7 +32,7 @@ if __name__ == "__main__":
     def_passwd = "password"
     
     # Insert new users using random name and default password
-    for i in range(numNewUsers):
+    for i in range(user_count):
         insert_query = "INSERT INTO user (username, password) VALUES (%s, %s)"
         tmp_username = fake.name()
         values = (tmp_username, def_passwd)
