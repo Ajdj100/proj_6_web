@@ -1,5 +1,5 @@
-import requests
 import mysql.connector
+import requests
 import json
 from sys import sys
 from random import randint
@@ -44,3 +44,5 @@ if __name__ == "__main__":
         body = "".join(res_json[i]["lines"])
         values = (rand_id, title, body)
         cursor.execute(insert_query, values)
+    
+    print("Rows have been added to database.")
