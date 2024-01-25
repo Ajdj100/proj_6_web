@@ -128,3 +128,20 @@ input[type=password]:focus {
   outline: none;
 }
 
+input[type=submit] {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-style: normal;
+  background-color: transparent;
+  border-style: solid;
+  border-color: #262626;
+  border-width: 3px;
+  padding: 15px;
+  padding-left: 40px;
+  padding-right: 40px;
+  font-size: large;
+}
+
+input[type=submit]:hover {
+  cursor: pointer;
+}
