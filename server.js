@@ -2,9 +2,19 @@ const express = require('express');
 const app = express();
 const port = 8000;
 
+const authChecker = function (req, res, next) {
+    if(req.path != '/login' && req.body.uid == -1) {
+        res.redirect('/login');
+    }
+    next();
+};
+
+app.use(express.json());
+app.use(authChecker);
+
 // Server routes
 app.get("/", function (req, res) {
-    res.send("Hello World!");
+    res.send("Hello World!"); 
 });
 
 app.post("/", function (req, res) {
