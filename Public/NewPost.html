@@ -156,11 +156,14 @@
     <h2>Create Article</h2>
     <div id="content">
         <form id="post" action="/submitPost">
-            <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post"
-                rows="3"></textarea>
-            <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true"
-                maxlength="1600" form="post" rows="20"></textarea>
-            <input type="submit" name="sendPostButton" id="sendPost" value="Post">
+            <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post" rows="3"
+                oninput="checkInput('postTitle')"></textarea>
+            <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true" maxlength="1600"
+                form="post" rows="18" oninput="checkInput('postBody')"></textarea>
+            <div id="buttonContainer">
+                <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Post" disabled
+                    style="transition: all 0.5s">
+            </div>
         </form>
     </div>
 </body>
