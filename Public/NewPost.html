@@ -99,6 +99,12 @@
         color: rgb(112, 112, 112) !important;
         transition: all 0.5s;
     }
+
+    #buttonContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: end;
+    }
 </style>
 
 <script>
@@ -152,10 +158,12 @@
         <form id="post" action="/submitPost">
             <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post" rows="3"
                 oninput="checkInput('postTitle')"></textarea>
-            <p class="showWarning" style="display: none;">hello</p>
             <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true" maxlength="1600"
                 form="post" rows="18" oninput="checkInput('postBody')"></textarea>
-            <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Post" disabled style="transition: all 0.5s">
+            <div id="buttonContainer">
+                <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Post" disabled
+                    style="transition: all 0.5s">
+            </div>
         </form>
     </div>
 </body>
