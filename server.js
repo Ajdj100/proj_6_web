@@ -26,13 +26,17 @@ app.get("/", function (req, res) {
     res.send("Hello World!");
 });
 
-app.get("/testquery", function(req, res) {
+app.get("/queryexample", function(req, res) {
     pool.query('SELECT * FROM user;', function (error, results, fields) {
         if (error) throw error;
-        for (let user in results) {
-            console.log(user.username);
-            console.log(user.password)
-        }
+        // Write all results to console
+        console.log(results)
+        // Write specific element from log
+        results.forEach( element => {
+            console.log(element.username);
+        });
+        // Return results in res
+        res.status(200).json({user: results})
     });
 });
 
