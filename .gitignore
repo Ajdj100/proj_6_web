@@ -134,3 +134,7 @@ connection.txt
 
 # Ignore HTTP files (for testing server)
 *.http
+
+
+*.sql
+.vscode

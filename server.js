@@ -16,7 +16,7 @@ const authChecker = function (req, res, next) {
 };
 
 app.use(express.json());
-app.use(authChecker);
+//app.use(authChecker);
 
 const connLimit = 100;
 
@@ -65,6 +65,22 @@ app.post("/login", function(req, res) {
             }
             else {
                 res.status(200).json(results[0]);
+            }
+        }
+    );
+});
+
+app.get("/posts", function(req, res) {
+    pool.query(
+        'SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id=user.user_id WHERE post_id < ? LIMIT ?;',
+        [req.body.lastID, req.body.limit], 
+        (error, results) => {
+            console.log(results);
+            if (error) {
+                res.status(500);
+            }
+            else {
+                res.status(200).json(results);
             }
         }
     );
