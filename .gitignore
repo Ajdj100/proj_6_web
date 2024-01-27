@@ -128,3 +128,9 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Database connection details
+connection.txt
+
+# Ignore HTTP files (for testing server)
+*.http
