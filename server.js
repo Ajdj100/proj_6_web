@@ -7,6 +7,16 @@ require('dotenv').config();
 const app = express();
 const port = 8000;
 
+const authChecker = function (req, res, next) {
+    if(req.path != '/login' && req.body.uid == -1) {
+        res.redirect('/login');
+    }
+    next();
+};
+
+app.use(express.json());
+app.use(authChecker);
+
 const connLimit = 100;
 
 const pool = mysql.createPool({
