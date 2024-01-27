@@ -5,6 +5,7 @@ require('dotenv').config();
 
 // Set up express app
 const app = express();
+app.use(express.json());
 const port = 8000;
 
 const connLimit = 100;
@@ -30,7 +31,6 @@ app.get("/queryexample", function(req, res) {
     pool.query('SELECT * FROM user;', function (error, results, fields) {
         if (error) throw error;
         // Write all results to console
-        console.log(results)
         // Write specific element from log
         results.forEach( element => {
             console.log(element.username);
@@ -40,7 +40,24 @@ app.get("/queryexample", function(req, res) {
     });
 });
 
+// Endpoint to verify user login credentials
 app.post("/login", function(req, res) {
+    pool.query(
+        'SELECT user_id from user WHERE username = ? AND password = ?;',
+        [req.body.username, req.body.password], 
+        (error, results) => {
+            console.log(results);
+            if (error) {
+                res.status(500);
+            }
+            else if (!results.length) {
+                res.status(401).send("Invalid credentials");
+            }
+            else {
+                res.status(200).json(results[0]);
+            }
+        }
+    );
 });
 
 app.listen(port, function () {
