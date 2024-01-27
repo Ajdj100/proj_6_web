@@ -1,3 +1,4 @@
 requests
 mysql-connector-python
 faker
+python-dotenv
