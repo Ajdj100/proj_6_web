@@ -1,7 +1,10 @@
 import mysql.connector
 from faker import Faker
-import sys
+from dotenv import load_dotenv
 from random import choice
+import os
+import sys
+
 
 if __name__ == "__main__":
     # Throw exception if no argument given
@@ -10,24 +13,22 @@ if __name__ == "__main__":
     except:
         raise Exception("Error, expected a command line argument for the number of new rows.")
     
-    # Read connection file
-    conn_file = open("connection.txt")
-    host_name = "localhost"
-    db_name = "webproject"
-    
-    # Connect to DB
+    # Load dotenv environment variables
+    env_path = "../.env"
+    load_dotenv(env_path)
+
+    # Connect to DB, create cursor
     db = mysql.connector.connect(
-        host=host_name, 
-        user=conn_file.readline(), 
-        password=conn_file.readline(), 
-        database=db_name
+        host=os.environ.get("HOST"), 
+        user=os.environ.get("USER"), 
+        password=os.environ.get("PASSWORD"), 
+        database=os.environ.get("DATABASE")
     )
-    conn_file.close()
     cursor = db.cursor()
 
     # Seed Faker
     fake = Faker()
-    Faker.seed(0)
+    Faker.seed()
 
     # Get all user ids
     user_query = "SELECT user_id FROM user;"
@@ -53,6 +54,7 @@ if __name__ == "__main__":
         insert_query = "INSERT INTO post (user_id, title, body) VALUES (%s, %s, %s)"
         values = (user_id, title, body)
         cursor.execute(insert_query, values)
+        print(values)
     
     db.commit()
     cursor.close()
