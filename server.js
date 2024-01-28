@@ -1,11 +1,13 @@
 // Imports
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors');
 require('dotenv').config();
 
 // Set up express app
 const app = express();
 app.use(express.json());
+app.use(cors());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
