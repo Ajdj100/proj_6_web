@@ -1,7 +1,8 @@
 // Imports
-const express = require('express');
-const mysql = require('mysql2');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const mysql = require("mysql2");
+require("dotenv").config();
 
 // Set up express app
 const app = express();
@@ -9,13 +10,15 @@ app.use(express.json());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    if(req.path != '/login' && req.body.uid == -1) {
-        res.redirect('/login');
+    if(req.path != "/login" && req.body.uid == -1) {
+        res.redirect("/login");
     }
     next();
 };
 
 app.use(express.json());
+app.use(express.static(__dirname + "/public"));
+app.use(cors());
 //app.use(authChecker);
 
 const connLimit = 100;
@@ -34,11 +37,11 @@ const pool = mysql.createPool({
 
 // Server routes
 app.get("/", function (req, res) {
-    res.send("Hello World!");
+    res.sendFile(__dirname + "/public/Login.html");
 });
 
 app.get("/queryexample", function(req, res) {
-    pool.query('SELECT * FROM user;', function (error, results, fields) {
+    pool.query("SELECT * FROM user;", function (error, results, fields) {
         if (error) throw error;
         // Write all results to console
         // Write specific element from log
@@ -100,6 +103,10 @@ app.post('/signup', function (req, res) {
         }
 
     );
+});
+
+app.get('/browse', function(req, res) {
+    res.sendFile(__dirname + "/public/Browse.html");
 });
 
 app.listen(port, function () {
