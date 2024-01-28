@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
-    <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
+    <link rel="stylesheet" href="styles.css"> <!-- Reference to your stylesheet -->
     <style>
         body {
         margin: 0;
@@ -33,6 +33,22 @@
     
         #article-body {
             margin-bottom: 30px;
+        }
+
+        #comment-form label {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-family: 'Roboto', sans-serif; 
+        }
+
+        #comment-form button {  
+            margin-top: 10px;
+            margin-left: 30px;
+        }
+
+        #comment-form textarea {
+            margin-top: 20px;
+            margin-left: 15px;
         }
     
         .comments-section {
@@ -106,30 +122,27 @@
         </div>
 
         <div id="content">
-        <!-- Article Title -->
+ 
         <h2 id="article-title"></h2>
     
-        <!-- Article Author -->
         <h2 id="article-author"></h2>
-    
-        <!-- Article Body -->
+     
         <p id="article-body"></p>
-    
-        <!-- Comments Section -->
+        
         <div class="comments-section">
             <h2>Comments</h2>
             <ul id="comments-list"></ul>
 
-            <!-- Comment Form -->
+            
             <form id="comment-form">
-                <label for="comment">Add a Comment:</label>
+                <label for="comment">Add a Comment:</label>     <!--I know these look bad but they refuse to line up--> 
                 <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
                 <button type="submit">Submit</button>
             </form>
         </div>
     
         <script>
-            const data = __DATA__; // Placeholder for the actual data
+            const data = __DATA__; // Placeholder for the actual data (currently actual data)
     
             // Set article details
             document.getElementById('article-title').innerText = data[0].title;

@@ -6,6 +6,7 @@ require('dotenv').config();
 // Set up express app
 const app = express();
 app.use(express.json());
+app.use(express.static(__dirname + "/public"));
 const port = 8000;
 
 const authChecker = function (req, res, next) {
@@ -65,6 +66,34 @@ app.post("/login", function(req, res) {
             }
             else {
                 res.status(200).json(results[0]);
+            }
+        }
+    );
+});
+
+const fs = require('fs');
+
+// Endpoint to load a single post
+app.get("/post", function(req, res) {
+    pool.query(
+        'SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
+        [req.query.id], 
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Internal Server Error");
+            } else {
+                // Read the HTML file
+                fs.readFile('Public/Article.html', 'utf8', (err, data) => {
+                    if (err) {
+                        res.status(500).send("Internal Server Error");
+                    } else {
+                        // Inject the data into the HTML
+                        const modifiedHTML = data.replace('__DATA__', JSON.stringify(results));
+
+                        // Send the modified HTML to the client
+                        res.send(modifiedHTML);
+                    }
+                });
             }
         }
     );
