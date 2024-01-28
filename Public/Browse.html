@@ -115,18 +115,26 @@
 <script>
     async function getArticles(currentArticle) {
         // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://127.0.0.1:8000/posts?current=-1&limit=5`, {
+        const res = await fetch(`http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`, {
             // mode: "no-cors"
         });
 
         const data = await res.json();
-        console.log(data);
         return data;
     }
 
     async function populateBrowse() {
         const data = await getArticles(sessionStorage.getItem("lastArticle"));
         const table = document.getElementById("browseTable");
+
+        //guard against trying to request more articles when the server has none left to give
+        if (data.length < 1) {
+            document.getElementById('endmsg').style.display = 'flex';
+            window.removeEventListener('scroll', scrollEventListener);
+            return;
+        }
+
+        sessionStorage.setItem("lastArticle", data[data.length - 1].post_id);
 
         document.getElementById('loader').style.display = 'none';
         data.forEach(element => {
@@ -155,6 +163,12 @@
     function setArticleNum(articleNum) {
         sessionStorage.setItem("lastArticle", articleNum)
     }
+
+    const scrollEventListener = () => {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+            populateBrowse();
+        }
+    };
 </script>
 
 <html>
@@ -162,6 +176,8 @@
 <body>
     <script>
         setArticleNum(-1);
+
+        window.addEventListener('scroll', scrollEventListener)
     </script>
     <div id="header">
         <div id="headerContent">
