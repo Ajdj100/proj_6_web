@@ -184,10 +184,6 @@ app.post('/comment', function (req, res) {
     );
 });
 
-app.options('/', function(req, res) {
-
-});
-
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
 });
