@@ -135,6 +135,7 @@ input[type=password]:focus {
     font-weight: 300;
     font-style: normal;
     padding: 10px;
+    margin-top: 20px;
     margin-bottom: 20px;
     border: 1px solid transparent;
     border-radius: 4px;

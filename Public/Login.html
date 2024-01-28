@@ -15,6 +15,18 @@
         document.cookie = cookieString;
     }
 
+    function displayError(msg) {
+        let errBox = document.getElementById("errorBox");
+        errBox.innerHTML = "<strong>Error: </strong>" + msg;
+        errBox.style.display = 'block';
+    }
+
+    function resetError() {
+        let errBox = document.getElementById("errorBox");
+        errBox.innerHTML = "<strong>Error: </strong>";
+        errBox.style.display = "none";
+    }
+
     function login() {
         const url = "http://localhost:8000/login"
         const json = {
@@ -31,11 +43,13 @@
         })
         .then(response => {
             if (response.status === 401) {
-                document.getElementById("loginError").style.display = 'block';
+                displayError("Invalid credentials.");
                 throw new Error("Invalid credentials");
             } else if (response.status != 200){
+                displayError("Server error.");
                 throw new Error("Server error");
             }
+            resetError();
             return response.json();
         })
         .then(data => {
@@ -55,8 +69,10 @@
             username : name,
             password : passwd 
         }
-        if (0 < name.length < 16  || 0 < passwd.length < 16) {
-            document.getElementById("signupError").style.display = 'block';
+        if ( name.length > 16  || passwd.length > 16) {
+            displayError("username and password length cannot be greater than 16.");
+        } else if(name.length === 0 || passwd.length === 0) {
+            displayError("username and password fields cannot be empty.")
         } else {
             console.log(json);
             const url = "http:localhost:8000/signup";
@@ -69,9 +85,10 @@
             })
             .then(response => {
                 if (response.status != 200) {
-                    alert("There was a server error while signing up.");
+                    displayError("There was a server error while signing up.");
                     throw new Error("Server error " + response.status);
                 }
+                resetError();
                 return response.json();
             })
             .then(data => {
@@ -86,6 +103,7 @@
     }
 
     function showSignUp() {
+        resetError();
         var loginForm = document.getElementById('login');
         loginForm.style.transition = "opacity 0.3s, transform 0.3s";
         loginForm.style.opacity = 0;
@@ -98,6 +116,7 @@
     }
 
     function showLogin() {
+        resetError();
         var loginForm = document.getElementById('login');
         loginForm.style.transition = "opacity 0.3s, transform 0.3s";
         loginForm.style.opacity = 1;
@@ -143,7 +162,11 @@
     }
 
     #signUpButton {
-        margin-top: 30px
+        margin-top: 20px
+    }
+    
+    #loginButton {
+        margin-top: 20px
     }
 
     #innerContainer {
@@ -161,24 +184,24 @@
                 <h3>Log In</h3>
                 <input type="text" id="username" placeholder="Username">
                 <input type="password" id="password" placeholder="Password">
-                <div class="alert alert-danger" id="loginError">
-                    <strong>Error:</strong> Invalid username or password
-                </div>
                 <i class="bi bi-arrow-right-circle-fill" style="font-size: 3rem; " onclick="login()"></i>
                 <a id="signUpButton" onclick="showSignUp()">Sign Up</a>
             </div>
+            
 
             <div class="input" id="signup" style="transform: translateX(50%); opacity: 0;">
                 <h3>Sign Up</h3>
                 <input type="text" id="newUsername" placeholder="Username">
                 <input type="password" id="newPassword" placeholder="Password">
-                <div class="alert alert-danger" id="signupError">
-                    <strong>Error:</strong> username or password is over 16 characters.
-                </div>
                 <i class="bi bi-arrow-right-circle-fill" style="font-size: 3rem; " onclick="signup()"></i>
                 <a id="loginButton" onclick="showLogin()">Log In</a>
             </div>
         </div>
+
+        <div class="alert alert-danger" id="errorBox">
+            <strong>Error: </strong>
+        </div>
+
     </div>
 </body>
 
