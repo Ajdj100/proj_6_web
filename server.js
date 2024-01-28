@@ -70,6 +70,23 @@ app.post("/login", function(req, res) {
         }
     );
 });
+          
+// Endpoint to return the data of a single post
+app.get("/post", function(req, res) {
+    pool.query(
+        'SELECT p.title, p.body AS post_body, u.username AS post_username, c.comment_id, c.body AS comment_body, cu.username AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
+        [req.query.id], 
+        (error, results) => {
+            console.log(results);
+            if (error) {
+                res.status(500);
+            }
+            else {
+                res.status(200).json(results);
+            }
+        }
+    );
+});
 
 app.get("/posts", function (req, res) {
     if (req.query.current == -1) {
@@ -103,6 +120,22 @@ app.get("/posts", function (req, res) {
             }
         );
     }
+});
+
+//Handles user Signup Post request
+app.post('/signup', function (req, res) {  
+    pool.query(
+        "INSERT INTO user (username, password) VALUES (?, ?)",
+        [req.body.username, req.body.password],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error Signing up a user");
+            } else {
+                res.status(200).json(results[0]);
+            }
+        }
+
+    );
 });
 
 app.listen(port, function () {
