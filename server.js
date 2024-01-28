@@ -146,7 +146,7 @@ app.post('/post', function (req, res) {
         [user_id, req.body.title, req.body.body],
         (error, results) => {
             if (error) {
-                res.status(500).send("Error Signing up a user");
+                res.status(500).send("Error creating a new post");
             } else {
                 res.status(200).json({ post_id: results.insertId });
             }
