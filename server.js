@@ -7,12 +7,13 @@ require('dotenv').config();
 // Set up express app
 const app = express();
 app.use(express.json());
+app.use(express.static(__dirname + "/public"));
 app.use(cors());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    if(req.path != '/login' && req.body.uid == -1) {
-        res.redirect('/login');
+    if(req.path != "/login" && req.body.uid == -1) {
+        res.redirect("/login");
     }
     next();
 };
@@ -35,11 +36,11 @@ const pool = mysql.createPool({
 
 // Server routes
 app.get("/", function (req, res) {
-    res.send("Hello World!");
+    res.sendFile(__dirname + "/public/Login.html");
 });
 
 app.get("/queryexample", function(req, res) {
-    pool.query('SELECT * FROM user;', function (error, results, fields) {
+    pool.query("SELECT * FROM user;", function (error, results, fields) {
         if (error) throw error;
         // Write all results to console
         // Write specific element from log
@@ -131,11 +132,15 @@ app.post('/signup', function (req, res) {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
-                res.status(200).json(results[0]);
+                res.status(200).json(results.insertId);
             }
         }
 
     );
+});
+
+app.get('/browse', function(req, res) {
+    res.sendFile(__dirname + "/public/Browse.html");
 });
 
 //Handles user Post request
@@ -155,7 +160,6 @@ app.post('/post', function (req, res) {
     );
 });
 
-
 //Handles user Comment request
 app.post('/comment', function (req, res) {  
     let user_id = req.body.user_id;
@@ -169,7 +173,6 @@ app.post('/comment', function (req, res) {
                 res.status(200).json({ comment_id: results.insertId });
             }
         }
-
     );
 });
 
