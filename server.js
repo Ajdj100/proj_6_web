@@ -102,6 +102,22 @@ app.post('/signup', function (req, res) {
     );
 });
 
+//Handles user Signup Post request
+app.post('/post', function (req, res) {  
+    pool.query(
+        "INSERT INTO user (username, password) VALUES (?, ?)",
+        [req.body.username, req.body.password],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error Signing up a user");
+            } else {
+                res.status(200).json(results[0]);
+            }
+        }
+
+    );
+});
+
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
 });
