@@ -1,1 +1,44 @@
-Article
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article</title>
+    <link rel="stylesheet" href="/styles.css">
+    <!-- Include any other stylesheets or scripts you need -->
+</head>
+<body>
+    <div class="article-container">
+        <!-- Article Title -->
+        <h1 id="article-title"></h1>
+
+        <!-- Article Author -->
+        <p id="article-author"></p>
+
+        <!-- Article Body -->
+        <div id="article-body"></div>
+
+        <!-- Comments Section -->
+        <div class="comments-section">
+            <h2>Comments</h2>
+            <ul id="comments-list"></ul>
+        </div>
+    </div>
+
+    <script>
+        // Assuming your server sends the data in the correct format
+        const data = /* Data received from the server */
+        
+        // Set article details
+        document.getElementById('article-title').innerText = data[0].title;
+        document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
+        document.getElementById('article-body').innerText = data[0].post_body;
+
+        // Display comments
+        const commentsList = document.getElementById('comments-list');
+        data.forEach(comment => {
+            const commentItem = document.createElement('li');
+            commentItem.innerHTML = `<strong>${comment.comment_username}:</strong> ${comment.comment_body}`;
+            commentsList.appendChild(commentItem);
+        });
+    </script>
+</body>
+</html>
