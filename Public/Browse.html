@@ -93,6 +93,23 @@
     .article {
         margin-bottom: 50px;
     }
+
+    #endmsg {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 80px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    #endmsg p {
+        padding-top: 20px;
+    }
+
+    #endmsg * {
+        text-align: center;
+    }
 </style>
 
 <script>
@@ -167,6 +184,10 @@
                 populateBrowse();
             </script>
         </div>
+    </div>
+    <div id="endmsg" style="display: none;">
+        <h2>Uh oh! Looks like you've seen everything there is to see.</h2>
+        <p>Come back another time when there are more posts</p>
     </div>
     <!-- LOADING ICON -->
     <div class="lds-facebook" id="loader">
