@@ -79,12 +79,53 @@
         background-color: transparent;
         resize: none;
         margin-bottom: 10px;
+        transition: all 0.5s;
+    }
+
+    .withContent {
+        border-left-color: black !important;
+        transition: all 0.5s;
+    }
+
+    .showWarning {
+        display: block !important;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+    }
+
+    .disabledButton {
+        border-color: rgb(112, 112, 112) !important;
+        color: rgb(112, 112, 112) !important;
+        transition: all 0.5s;
     }
 </style>
 
 <script>
     function navigateTo(location) {
         window.location.href = location;
+    }
+
+    function checkInput(elementID) {
+        let element = document.getElementById(elementID);
+
+        if (element.value.length > 0) {
+            element.classList.add('withContent');
+        } else {
+            element.classList.remove('withContent');
+        }
+
+        // enable or disable the button based on the post being filled out.
+        let inputElements = document.getElementsByTagName('textarea');
+        let submitButton = document.getElementById("sendPost");
+
+        if (inputElements[0].value.length > 0 && inputElements[1].value.length > 0) {
+            submitButton.classList.remove('disabledButton');
+            submitButton.disabled = false;
+        } else {
+            submitButton.disabled = true;
+            submitButton.classList.add('disabledButton');
+        }
     }
 </script>
 
@@ -109,11 +150,12 @@
     <h2>Create Article</h2>
     <div id="content">
         <form id="post" action="/submitPost">
-            <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post"
-                rows="3"></textarea>
-            <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true"
-                maxlength="1600" form="post" rows="20"></textarea>
-            <input type="submit" name="sendPostButton" id="sendPost" value="Post">
+            <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post" rows="3"
+                oninput="checkInput('postTitle')"></textarea>
+            <p class="showWarning" style="display: none;">hello</p>
+            <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true" maxlength="1600"
+                form="post" rows="18" oninput="checkInput('postBody')"></textarea>
+            <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Post" disabled style="transition: all 0.5s">
         </form>
     </div>
 </body>
