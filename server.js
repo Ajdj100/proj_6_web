@@ -155,6 +155,7 @@ app.post('/post', function (req, res) {
     );
 });
 
+
 //Handles user Comment request
 app.post('/comment', function (req, res) {  
     let user_id = req.body.user_id;
