@@ -1,44 +1,217 @@
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
-    <link rel="stylesheet" href="/styles.css">
-    <!-- Include any other stylesheets or scripts you need -->
+    <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
+    <style>
+        body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+    
+        #article-title {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    
+        #article-author {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+    
+        #article-body {
+            margin-bottom: 30px;
+        }
+    
+        .comments-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: left;
+        }
+    
+        .comment-item {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+    
+        .comment-content {
+            font-family: 'Roboto', sans-serif; 
+        }
+    
+        .comment-author {
+            font-style: italic;
+            color: #555;
+            margin-top: 5px; 
+        }
+
+        #headerContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 50px;
+        padding-right: 50px;
+        max-width: 1000px;
+        margin: auto;
+        }
+
+        #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: inherit;
+        filter: drop-shadow(0px 1px 10px #0000003d);
+        }
+
+        #content {
+        margin-top: 20px;
+        max-width: 1000px;
+        padding-left: 40px;
+        padding-right: 40px;
+        }
+
+        #label {
+            font-family: 'Roboto', sans-serif; 
+            text-align: start;
+        }
+    </style>
 </head>
-<body>
-    <div class="article-container">
+    <body>
+        <div id="header">
+            <div id="headerContent">
+                <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                    onclick="navigateTo('CreatePost')"></i>
+                <h1 style="font-size: 55px;">Website Title</h1>
+                <a href="#" onclick="logout()">logout</a>
+            </div>
+        </div>
+
+        <div id="content">
         <!-- Article Title -->
-        <h1 id="article-title"></h1>
-
+        <h2 id="article-title"></h2>
+    
         <!-- Article Author -->
-        <p id="article-author"></p>
-
+        <h2 id="article-author"></h2>
+    
         <!-- Article Body -->
-        <div id="article-body"></div>
-
+        <p id="article-body"></p>
+    
         <!-- Comments Section -->
         <div class="comments-section">
             <h2>Comments</h2>
             <ul id="comments-list"></ul>
+
+            <!-- Comment Form -->
+            <form id="comment-form">
+                <label for="comment">Add a Comment:</label>
+                <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
         </div>
+    
+        <script>
+            const data = __DATA__; // Placeholder for the actual data
+    
+            // Set article details
+            document.getElementById('article-title').innerText = data[0].title;
+            document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
+            document.getElementById('article-body').innerText = data[0].post_body;
+    
+            // Display comments
+            const commentsList = document.getElementById('comments-list');
+
+            // Check if there are comments before iterating
+            if (data[0].comment_id !== null) {
+                data.forEach(comment => {
+                appendComment(comment);
+                });
+            } else {
+                // Handle the case when there are no comments
+                const noCommentsMessage = document.createElement('p');
+                noCommentsMessage.innerText = 'No comments yet.';
+                commentsList.appendChild(noCommentsMessage);
+            }
+
+             // Comment Form Submission
+            const commentForm = document.getElementById('comment-form');
+            commentForm.addEventListener('submit', function (event) {
+                event.preventDefault(); // Prevent the default form submission behavior
+                
+                const commentTextarea = document.getElementById('comment');
+                const newCommentBody = commentTextarea.value;
+
+                // Add the new comment to the comments list
+                const newComment = {
+                    comment_body: newCommentBody,
+                    comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                };
+
+                appendComment(newComment);
+
+                // Clear the comment textarea
+                commentTextarea.value = '';
+
+                // Make the request to the api (to post the comment to the database)
+                fetch('http://localhost:8000/comment', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        body: newCommentBody,
+                        user_id: '1', // Replace with the actual user_id
+                        post_id: data[0].post_id,
+                    }),
+                })
+                .then(response => response.json())
+                .then(data => console.log('Comment submitted:', data))
+                .catch(error => console.error('Error submitting comment:', error));
+            });
+
+    
+            // Function to append a comment to the comments list
+            function appendComment(comment) {
+                const commentItem = document.createElement('li');
+                commentItem.className = 'comment-item';
+
+                // Comment Content
+                const commentContent = document.createElement('div');
+                commentContent.className = 'comment-content';
+                commentContent.innerHTML = comment.comment_body;
+
+                // Comment Author
+                const commentAuthor = document.createElement('div');
+                commentAuthor.className = 'comment-author';
+                commentAuthor.innerHTML = `- ${comment.comment_username}`;
+
+                // Append content and author to the comment item
+                commentItem.appendChild(commentContent);
+                commentItem.appendChild(commentAuthor);
+
+                commentsList.appendChild(commentItem);
+            }
+        </script>
     </div>
-
-    <script>
-        // Assuming your server sends the data in the correct format
-        const data = /* Data received from the server */
-        
-        // Set article details
-        document.getElementById('article-title').innerText = data[0].title;
-        document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
-        document.getElementById('article-body').innerText = data[0].post_body;
-
-        // Display comments
-        const commentsList = document.getElementById('comments-list');
-        data.forEach(comment => {
-            const commentItem = document.createElement('li');
-            commentItem.innerHTML = `<strong>${comment.comment_username}:</strong> ${comment.comment_body}`;
-            commentsList.appendChild(commentItem);
-        });
-    </script>
 </body>
-</html>
+
+
+
