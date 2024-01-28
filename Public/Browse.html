@@ -93,17 +93,33 @@
     .article {
         margin-bottom: 50px;
     }
+
+    #endmsg {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 80px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    #endmsg p {
+        padding-top: 20px;
+    }
+
+    #endmsg * {
+        text-align: center;
+    }
 </style>
 
 <script>
     async function getArticles(currentArticle) {
         // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://127.0.0.1:8000/posts?current=-1&limit=5`, {
+        const res = await fetch(`http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`, {
             // mode: "no-cors"
         });
 
         const data = await res.json();
-        console.log(data);
         return data;
     }
 
@@ -111,11 +127,24 @@
         const data = await getArticles(sessionStorage.getItem("lastArticle"));
         const table = document.getElementById("browseTable");
 
+        //guard against trying to request more articles when the server has none left to give
+        if (data.length < 1) {
+            document.getElementById('endmsg').style.display = 'flex';
+            window.removeEventListener('scroll', scrollEventListener);
+            return;
+        }
+
+        sessionStorage.setItem("lastArticle", data[data.length - 1].post_id);
+
         document.getElementById('loader').style.display = 'none';
         data.forEach(element => {
-            let content = element.body.toString().substring(0, 200);
+            let content = element.body.substring(0, 200);
+            if (element.body.toString().length > 200) {
+                content.substring(0, content.lastIndexOf(' '))
+                content += "...";
+            }
 
-            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content.substring(0, content.lastIndexOf(' '))}...</p></div>`
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });
@@ -134,6 +163,12 @@
     function setArticleNum(articleNum) {
         sessionStorage.setItem("lastArticle", articleNum)
     }
+
+    const scrollEventListener = () => {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+            populateBrowse();
+        }
+    };
 </script>
 
 <html>
@@ -141,6 +176,8 @@
 <body>
     <script>
         setArticleNum(-1);
+
+        window.addEventListener('scroll', scrollEventListener)
     </script>
     <div id="header">
         <div id="headerContent">
@@ -167,6 +204,10 @@
                 populateBrowse();
             </script>
         </div>
+    </div>
+    <div id="endmsg" style="display: none;">
+        <h2>Uh oh! Looks like you've seen everything there is to see.</h2>
+        <p>Come back another time when there are more posts</p>
     </div>
     <!-- LOADING ICON -->
     <div class="lds-facebook" id="loader">
