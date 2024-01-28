@@ -84,7 +84,7 @@
 
 <script>
     function navigateTo(location) {
-        
+        window.location.href = location;
     }
 </script>
 
@@ -95,7 +95,7 @@
         <div id="headerContent">
 
             <i class="bi bi-arrow-left-circle-fill" style="font-size: 2.5rem; cursor: pointer;"
-                onclick="navigateTo('CreatePost')"></i>
+                onclick="navigateTo('Browse')"></i>
             <h1>Website Title</h1>
             <!-- <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i> -->
             <a href="#" onclick="logout()">logout</a>
