@@ -125,11 +125,18 @@
 
         window.location.href = './Login.html';
     }
+
+    function setArticleNum(articleNum) {
+        sessionStorage.setItem("lastArticle", articleNum)
+    }
 </script>
 
 <html>
 
 <body>
+    <script>
+        setArticleNum(-1);
+    </script>
     <div id="header">
         <div id="headerContent">
 
