@@ -130,9 +130,13 @@
 
         document.getElementById('loader').style.display = 'none';
         data.forEach(element => {
-            let content = element.body.toString().substring(0, 200);
+            let content = element.body.substring(0, 200);
+            if (element.body.toString().length > 200) {
+                content.substring(0, content.lastIndexOf(' '))
+                content += "...";
+            }
 
-            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content.substring(0, content.lastIndexOf(' '))}...</p></div>`
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });
