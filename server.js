@@ -142,7 +142,7 @@ app.post('/signup', function (req, res) {
 app.post('/post', function (req, res) {  
     let user_id = req.body.user_id;
     pool.query(
-        "INSERT INTO (user_id, title, body) VALUES (?, ?, ?)",
+        "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
         [user_id, req.body.title, req.body.body],
         (error, results) => {
             if (error) {
@@ -159,7 +159,7 @@ app.post('/post', function (req, res) {
 app.post('/comment', function (req, res) {  
     let user_id = req.body.user_id;
     pool.query(
-        "INSERT INTO (body, post_id, user_id) VALUES (?, ?, ?)",
+        "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
         [rq.body.body, req.body.user_id, user_id],
         (error, results) => {
             if (error) {
