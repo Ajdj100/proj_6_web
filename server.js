@@ -106,13 +106,13 @@ app.post('/signup', function (req, res) {
 app.post('/post', function (req, res) {  
     let user_id = req.body.user_id;
     pool.query(
-        "INSERT INTO (user_id, title, body) VALUES (?, ?, ?)'",
+        "INSERT INTO (user_id, title, body) VALUES (?, ?, ?)",
         [user_id, req.body.title, req.body.body],
         (error, results) => {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
-                res.status(200).json(results[0]);
+                res.status(200).json({ post_id: results.insertId });
             }
         }
 
