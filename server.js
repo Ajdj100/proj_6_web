@@ -142,7 +142,7 @@ app.post('/signup', function (req, res) {
 app.post('/post', function (req, res) {  
     let user_id = req.body.user_id;
     pool.query(
-        "INSERT INTO (user_id, title, body) VALUES (?, ?, ?)",
+        "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
         [user_id, req.body.title, req.body.body],
         (error, results) => {
             if (error) {
