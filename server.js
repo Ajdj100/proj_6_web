@@ -15,7 +15,6 @@ const authChecker = function (req, res, next) {
     next();
 };
 
-app.use(express.json());
 //app.use(authChecker);
 
 const connLimit = 100;
