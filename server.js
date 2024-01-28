@@ -161,7 +161,7 @@ app.post('/comment', function (req, res) {
     let user_id = req.body.user_id;
     pool.query(
         "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
-        [rq.body.body, req.body.post_id, user_id],
+        [req.body.body, req.body.post_id, user_id],
         (error, results) => {
             if (error) {
                 res.status(500).send("Error creating a new comment");
