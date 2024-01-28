@@ -176,6 +176,12 @@ app.post('/comment', function (req, res) {
     );
 });
 
+//Handling the edit post 
+app.patch('/post', function(req, res) {
+    
+});
+
+
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
 });
