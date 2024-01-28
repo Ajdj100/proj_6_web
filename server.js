@@ -98,7 +98,7 @@ app.post('/signup', function (req, res) {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
-                res.status(200).json(results[0]);
+                res.status(200).json(results.insertId);
             }
         }
 
