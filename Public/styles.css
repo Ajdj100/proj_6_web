@@ -8,7 +8,6 @@
 }
 
 body {
-  /* background-color: #F8F5F2; */
   background-color: #f7f7f7;
 }
 
@@ -34,13 +33,13 @@ h1 {
   font-family: "Bebas Neue", sans-serif;
   font-weight: 400;
   font-style: normal;
-  font-size: 75;
+  font-size:75;
   border: solid 4px;
   text-align: center;
   padding-left: 30px;
   padding-right: 30px;
   width: fit-content;
-  height: 90px;
+  height: 65px;
   margin-top: 10px;
   margin-bottom: 10px;
 }
@@ -68,14 +67,14 @@ h4 {
   font-weight: 400;
   font-style: normal;
   font-size: large;
-  margin-top: 5px;
+  margin-top: 0px;
   margin-bottom: 5px;
   color: #767676;
 }
 
 p {
   font-family: "Roboto", sans-serif;
-  font-weight: 400;
+  font-weight: 300;
   font-style: normal;
   margin-top: 0px;
   margin-bottom: 5px;

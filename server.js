@@ -1,11 +1,13 @@
 // Imports
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors');
 require('dotenv').config();
 
 // Set up express app
 const app = express();
 app.use(express.json());
+app.use(cors());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
@@ -15,7 +17,6 @@ const authChecker = function (req, res, next) {
     next();
 };
 
-app.use(express.json());
 //app.use(authChecker);
 
 const connLimit = 100;
@@ -69,7 +70,7 @@ app.post("/login", function(req, res) {
         }
     );
 });
-
+          
 // Endpoint to return the data of a single post
 app.get("/post", function(req, res) {
     pool.query(
@@ -87,20 +88,38 @@ app.get("/post", function(req, res) {
     );
 });
 
-app.get("/posts", function(req, res) {
-    pool.query(
-        'SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id=user.user_id WHERE post_id < ? LIMIT ?;',
-        [req.body.lastID, req.body.limit], 
-        (error, results) => {
-            console.log(results);
-            if (error) {
-                res.status(500);
+app.get("/posts", function (req, res) {
+    if (req.query.current == -1) {
+        console.log('requested newest posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 5;',
+            [req.query.limit],
+            (error, results) => {
+                console.log(req.query.limit);
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
             }
-            else {
-                res.status(200).json(results);
+        );
+    } else {
+        console.log('requested more posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post_id < ? ORDER BY post.post_id DESC LIMIT 5;',
+            [req.query.current, req.query.limit],
+            (error, results) => {
+                console.log(req.query.current, req.query.limit)
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
             }
-        }
-    );
+        );
+    }
 });
 
 //Handles user Signup Post request
