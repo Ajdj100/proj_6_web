@@ -146,7 +146,7 @@ app.post('/post', function (req, res) {
         [user_id, req.body.title, req.body.body],
         (error, results) => {
             if (error) {
-                res.status(500).send("Error Signing up a user");
+                res.status(500).send("Error creating a new post");
             } else {
                 res.status(200).json({ post_id: results.insertId });
             }
@@ -154,6 +154,25 @@ app.post('/post', function (req, res) {
 
     );
 });
+
+
+//Handles user Comment request
+app.post('/comment', function (req, res) {  
+    let user_id = req.body.user_id;
+    pool.query(
+        "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
+        [req.body.body, req.body.post_id, user_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error creating a new comment");
+            } else {
+                res.status(200).json({ comment_id: results.insertId });
+            }
+        }
+
+    );
+});
+
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
 });
