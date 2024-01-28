@@ -91,7 +91,7 @@ app.get("/post", function(req, res) {
 app.get("/posts", function (req, res) {
     if (req.query.current == -1) {
         console.log('requested newest posts');
-        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 5;',
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 10;',
             [req.query.limit],
             (error, results) => {
                 console.log(req.query.limit);
