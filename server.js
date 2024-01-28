@@ -173,8 +173,8 @@ app.post('/comment', function (req, res) {
                 res.status(200).json({ comment_id: results.insertId });
             }
         }
-
     );
+});
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
