@@ -111,6 +111,7 @@
         }
     </style>
 </head>
+
     <body>
         <div id="header">
             <div id="headerContent">
@@ -122,8 +123,20 @@
                 <a href="#" onclick="logout()">logout</a>
             </div>
         </div>
+    </div>
 
-        <div id="content">
+<body>
+    <div id="header">
+        <div id="headerContent">
+            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                onclick="navigateTo('CreatePost')"></i>
+            <h1 style="font-size: 55px;">Website Title</h1>
+            <a href="#" onclick="logout()">logout</a>
+        </div>
+    </div>
+
+    <div id="content">
+    <div id="content">
  
         <h2 id="article-title"></h2>
     
@@ -153,13 +166,26 @@
                 return data;
             }
 
+            async function getUserName(id) {
+                const res = await fetch(`http://localhost:8000/username?id=${id}`, {
+                    
+                });
+
+                const data = await res.json();
+                return data;
+            }
+
             async function populateBrowser() {
-                const currentURL = window.location.href;
+                const currentURL = window.location.href;    // Get parameters of post
                 const url = new URL(currentURL);
                 const searchParams = url.searchParams;
                 const id = searchParams.get('id');
 
+                //let uid = document.cookie.split('=');  // Get user id from cookie
+                let uid = 1;        // Replace with above after merge with main
+
                 const data = await getPost(id);
+                const CurrentUser = await getUserName(uid);
 
                 document.getElementById('article-title').innerText = data[0].title;     // Set article details
                 document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
@@ -186,12 +212,12 @@
 
                     const newComment = {    // Add the new comment to the comments list
                         comment_body: newCommentBody,
-                        comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                        comment_username: CurrentUser[0].username, // Current user is returned from the getUserName function 
                     };
 
                     appendComment(newComment);
 
-                    
+
                     commentTextarea.value = ''; // Clear the comment textarea
                     
                     // TODO: Fix to make work with comment endpoint
@@ -202,8 +228,9 @@
                         },
                         body: JSON.stringify({
                             body: newCommentBody,
-                            user_id: '1', // Replace with the actual user_id
                             post_id: data[0].post_id,
+                            user_id: uid,
+                            user_id: uid,
                         }),
                     })
                     .then(response => response.json())
@@ -236,6 +263,3 @@
         </script>
     </div>
 </body>
-
-
-

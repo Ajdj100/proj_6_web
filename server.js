@@ -102,6 +102,21 @@ app.get("/post", function(req, res) {
     );
 });
 
+app.get("/username", function(req, res) {
+    pool.query('SELECT username FROM user WHERE user_id=?;',
+        [req.query.id], 
+        (error, results) => {
+            console.log(results);
+            if (error) {
+                res.status(500);
+            }
+            else {
+                res.status(200).json(results);
+            }
+        }
+    );
+});
+
 app.get("/posts", function (req, res) {
     if (req.query.current == -1) {
         console.log('requested newest posts');
