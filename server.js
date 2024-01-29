@@ -9,6 +9,14 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Cookie');
+        return res.sendStatus(200);
+    }
+    next();
+});
 const port = 8000;
 
 const authChecker = function (req, res, next) {
