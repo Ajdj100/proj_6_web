@@ -207,9 +207,6 @@
                     const commentTextarea = document.getElementById('comment');
                     const newCommentBody = commentTextarea.value;
 
-                    let uid = document.cookie.split('=');
-
-                    let CurrentUser = getUserName(uid)
                     const newComment = {    // Add the new comment to the comments list
                         comment_body: newCommentBody,
                         comment_username: CurrentUser[0].username, // Current user is returned from the getUserName function 
