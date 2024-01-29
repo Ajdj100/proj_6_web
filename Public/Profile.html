@@ -113,9 +113,9 @@
 </style>
 
 <script>
-    async function getArticles(currentArticle) {
-        // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://localhost:8000/posts?current=${currentArticle}&limit=5`, {
+    async function getArticles() {
+        // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5` `http://127.0.0.1:8000/profile?current=${currentArticle}&limit=5`
+        const res = await fetch(`http://localhost:8000/profile`, {
             // mode: "no-cors"
         });
 
@@ -124,7 +124,7 @@
     }
 
     async function populateBrowse() {
-        const data = await getArticles(sessionStorage.getItem("lastArticle"));
+        const data = await getArticles();
         const table = document.getElementById("browseTable");
 
         //guard against trying to request more articles when the server has none left to give
@@ -144,16 +144,14 @@
                 content += "...";
             }
 
-            const currentRootUrl = window.location.origin;
-
-            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('${currentRootUrl}/article?id=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });
     }
 
     function navigateTo(location) {
-        window.location.href = `${location}`
+        window.location.href = `./${location}.html`
     }
 
     function logout() {
@@ -181,19 +179,19 @@
 
         window.addEventListener('scroll', scrollEventListener)
     </script>
-
-        <div id="header">
-            <div id="headerContent">
-                <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                    onclick="navigateTo('CreatePost')"></i>          
-                    <a onclick="navigateTo('browse')" >browse</a>
-                    <h1>Website Title</h1>
-                <a onclick="navigateTo('profile.html')" >profile</a>
-                <a href="#" onclick="logout()">logout</a>
-            </div>
-
+    <div id="header">
+        <div id="headerContent">
+            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                onclick="navigateTo('CreatePost')"></i>          
+                <a onclick="navigateTo('browse')" >browse</a>
+                <h1>Website Title</h1>
+            <a onclick="navigateTo('profile')" >profile</a>
+            <a href="#" onclick="logout()">logout</a>
         </div>
-    <h2>Articles</h2>
+    </div>
+
+    <h2>Your Profile</h2>
+    
     <div id="content">
         <div id="articles">
             <table id="browseTable">
