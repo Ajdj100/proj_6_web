@@ -81,6 +81,7 @@ app.post("/login", function(req, res) {
                 res.status(401).send("Invalid credentials");
             }
             else {
+                res.cookie("current_user", results[0])
                 res.status(200).json(results[0]);
             }
         }
@@ -152,6 +153,7 @@ app.post('/signup', function (req, res) {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
+                res.cookie("current_user", results.insertId);
                 res.status(200).json(results.insertId);
             }
         }
