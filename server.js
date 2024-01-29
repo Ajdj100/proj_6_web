@@ -1,12 +1,14 @@
 // Imports
 const express = require('express');
 const mysql = require('mysql2');
+const cors = require('cors');
 require('dotenv').config();
 
 // Set up express app
 const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
+app.use(cors());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
@@ -16,7 +18,6 @@ const authChecker = function (req, res, next) {
     next();
 };
 
-app.use(express.json());
 //app.use(authChecker);
 
 const connLimit = 100;
@@ -70,39 +71,14 @@ app.post("/login", function(req, res) {
         }
     );
 });
-
-const fs = require('fs');
-
-// Endpoint to load a single post
+          
+// Endpoint to return the data of a single post
 app.get("/post", function(req, res) {
+    console.log("Post ID:", req.query.id);
+    
     pool.query(
         'SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
         [req.query.id], 
-        (error, results) => {
-            if (error) {
-                res.status(500).send("Internal Server Error");
-            } else {
-                // Read the HTML file
-                fs.readFile('Public/Article.html', 'utf8', (err, data) => {
-                    if (err) {
-                        res.status(500).send("Internal Server Error");
-                    } else {
-                        // Inject the data into the HTML
-                        const modifiedHTML = data.replace('__DATA__', JSON.stringify(results));
-
-                        // Send the modified HTML to the client
-                        res.send(modifiedHTML);
-                    }
-                });
-            }
-        }
-    );
-});
-
-app.get("/posts", function(req, res) {
-    pool.query(
-        'SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id=user.user_id WHERE post_id < ? LIMIT ?;',
-        [req.body.lastID, req.body.limit], 
         (error, results) => {
             console.log(results);
             if (error) {
@@ -114,6 +90,44 @@ app.get("/posts", function(req, res) {
         }
     );
 });
+
+app.get("/posts", function (req, res) {
+    if (req.query.current == -1) {
+        console.log('requested newest posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 5;',
+            [req.query.limit],
+            (error, results) => {
+                console.log(req.query.limit);
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
+            }
+        );
+    } else {
+        console.log('requested more posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post_id < ? ORDER BY post.post_id DESC LIMIT 5;',
+            [req.query.current, req.query.limit],
+            (error, results) => {
+                console.log(req.query.current, req.query.limit)
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
+            }
+        );
+    }
+});
+
+app.get('/article', function(req, res) {
+    res.sendFile(__dirname + "/public/Article.html");
+})
 
 //Handles user Signup Post request
 app.post('/signup', function (req, res) {  

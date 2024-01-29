@@ -3,7 +3,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
-    <link rel="stylesheet" href="styles.css"> <!-- Reference to your stylesheet -->
+    <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
     <style>
         body {
         margin: 0;
@@ -142,86 +142,95 @@
         </div>
     
         <script>
-            const data = __DATA__; // Placeholder for the actual data (currently actual data)
-    
-            // Set article details
-            document.getElementById('article-title').innerText = data[0].title;
-            document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
-            document.getElementById('article-body').innerText = data[0].post_body;
-    
-            // Display comments
-            const commentsList = document.getElementById('comments-list');
+            async function getPost(id) {
+                const res = await fetch(`http://127.0.0.1:8000/post?id=${id}`, {
 
-            // Check if there are comments before iterating
-            if (data[0].comment_id !== null) {
-                data.forEach(comment => {
-                appendComment(comment);
                 });
-            } else {
-                // Handle the case when there are no comments
-                const noCommentsMessage = document.createElement('p');
-                noCommentsMessage.innerText = 'No comments yet.';
-                commentsList.appendChild(noCommentsMessage);
+
+                const data = await res.json();
+                return data;
             }
 
-             // Comment Form Submission
-            const commentForm = document.getElementById('comment-form');
-            commentForm.addEventListener('submit', function (event) {
-                event.preventDefault(); // Prevent the default form submission behavior
-                
-                const commentTextarea = document.getElementById('comment');
-                const newCommentBody = commentTextarea.value;
+            async function populateBrowser() {
+                const currentURL = window.location.href;
+                const url = new URL(currentURL);
+                const searchParams = url.searchParams;
+                const id = searchParams.get('id');
 
-                // Add the new comment to the comments list
-                const newComment = {
-                    comment_body: newCommentBody,
-                    comment_username: 'CurrentUser', // You can replace this with the actual username or user data
-                };
+                const data = await getPost(id);
 
-                appendComment(newComment);
-
-                // Clear the comment textarea
-                commentTextarea.value = '';
-
-                // Make the request to the api (to post the comment to the database)
-                fetch('http://localhost:8000/comment', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        body: newCommentBody,
-                        user_id: '1', // Replace with the actual user_id
-                        post_id: data[0].post_id,
-                    }),
-                })
-                .then(response => response.json())
-                .then(data => console.log('Comment submitted:', data))
-                .catch(error => console.error('Error submitting comment:', error));
-            });
-
+                document.getElementById('article-title').innerText = data[0].title;     // Set article details
+                document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
+                document.getElementById('article-body').innerText = data[0].post_body;
     
-            // Function to append a comment to the comments list
-            function appendComment(comment) {
-                const commentItem = document.createElement('li');
-                commentItem.className = 'comment-item';
+                const commentsList = document.getElementById('comments-list');  // Display comments
 
-                // Comment Content
-                const commentContent = document.createElement('div');
-                commentContent.className = 'comment-content';
-                commentContent.innerHTML = comment.comment_body;
+                if (data[0].comment_id !== null) {                  // Check if there are comments before iterating
+                    data.forEach(comment => {
+                        appendComment(comment);
+                    });
+                } else {
+                    const noCommentsMessage = document.createElement('p');      // Handle the case when there are no comments
+                    noCommentsMessage.innerText = 'No comments yet.';
+                    commentsList.appendChild(noCommentsMessage);
+                }
 
-                // Comment Author
-                const commentAuthor = document.createElement('div');
-                commentAuthor.className = 'comment-author';
-                commentAuthor.innerHTML = `- ${comment.comment_username}`;
+                const commentForm = document.getElementById('comment-form');    // Comment form submission
+                commentForm.addEventListener('submit', function (event) {
+                    event.preventDefault();     // Prevent the default form submission behavior
+                
+                    const commentTextarea = document.getElementById('comment');
+                    const newCommentBody = commentTextarea.value;
 
-                // Append content and author to the comment item
-                commentItem.appendChild(commentContent);
-                commentItem.appendChild(commentAuthor);
+                    const newComment = {    // Add the new comment to the comments list
+                        comment_body: newCommentBody,
+                        comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                    };
 
-                commentsList.appendChild(commentItem);
+                    appendComment(newComment);
+
+                    
+                    commentTextarea.value = ''; // Clear the comment textarea
+                    
+                    // TODO: Fix to make work with comment endpoint
+                    fetch('http://localhost:8000/comment', {    // Make the request to the api (to post the comment to the database)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            body: newCommentBody,
+                            user_id: '1', // Replace with the actual user_id
+                            post_id: data[0].post_id,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log('Comment submitted:', data))
+                    .catch(error => console.error('Error submitting comment:', error));
+                });
+    
+            
+                function appendComment(comment) {       // Append a comment to the comments list
+                    const commentItem = document.createElement('li');
+                    commentItem.className = 'comment-item';
+
+                    const commentContent = document.createElement('div');       // Comment Content
+                    commentContent.className = 'comment-content';
+                    commentContent.innerHTML = comment.comment_body;
+
+                    const commentAuthor = document.createElement('div');                    // Comment Author
+                    commentAuthor.className = 'comment-author';
+                    commentAuthor.innerHTML = `- ${comment.comment_username}`;
+
+                    commentItem.appendChild(commentContent);                        // Append content and author to the comment item
+                    commentItem.appendChild(commentAuthor);
+
+                    commentsList.appendChild(commentItem);
+                }
             }
+
+            populateBrowser();
+            
         </script>
     </div>
 </body>
