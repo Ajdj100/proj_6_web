@@ -1,1 +1,239 @@
-Article
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Article</title>
+    <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
+    <style>
+        body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        }
+    
+        #article-title {
+            margin-bottom: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+    
+        #article-author {
+            font-style: italic;
+            color: #555;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+    
+        #article-body {
+            margin-bottom: 30px;
+        }
+
+        #comment-form label {
+            font-size: 1.2rem;
+            margin-top: 10px;
+            font-family: 'Roboto', sans-serif; 
+        }
+
+        #comment-form button {  
+            margin-top: 10px;
+            margin-left: 30px;
+        }
+
+        #comment-form textarea {
+            margin-top: 20px;
+            margin-left: 15px;
+        }
+    
+        .comments-section {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            text-align: left;
+        }
+    
+        .comment-item {
+            list-style-type: none;
+            margin: 0;
+            padding: 10px 0;
+            border-bottom: 1px solid #ccc;
+        }
+    
+        .comment-content {
+            font-family: 'Roboto', sans-serif; 
+        }
+    
+        .comment-author {
+            font-style: italic;
+            color: #555;
+            margin-top: 5px; 
+        }
+
+        #headerContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 50px;
+        padding-right: 50px;
+        max-width: 1000px;
+        margin: auto;
+        }
+
+        #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: inherit;
+        filter: drop-shadow(0px 1px 10px #0000003d);
+        }
+
+        #content {
+        margin-top: 20px;
+        max-width: 1000px;
+        padding-left: 40px;
+        padding-right: 40px;
+        }
+
+        #label {
+            font-family: 'Roboto', sans-serif; 
+            text-align: start;
+        }
+    </style>
+</head>
+    <body>
+        <div id="header">
+            <div id="headerContent">
+                <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                    onclick="navigateTo('CreatePost')"></i>
+                <h1 style="font-size: 55px;">Website Title</h1>
+                <a href="#" onclick="logout()">logout</a>
+            </div>
+        </div>
+
+        <div id="content">
+ 
+        <h2 id="article-title"></h2>
+    
+        <h2 id="article-author"></h2>
+     
+        <p id="article-body"></p>
+        
+        <div class="comments-section">
+            <h2>Comments</h2>
+            <ul id="comments-list"></ul>
+
+            
+            <form id="comment-form">
+                <label for="comment">Add a Comment:</label>     <!--I know these look bad but they refuse to line up--> 
+                <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    
+        <script>
+            async function getPost(id) {
+                const res = await fetch(`http://127.0.0.1:8000/post?id=${id}`, {
+
+                });
+
+                const data = await res.json();
+                return data;
+            }
+
+            async function populateBrowser() {
+                const currentURL = window.location.href;
+                const url = new URL(currentURL);
+                const searchParams = url.searchParams;
+                const id = searchParams.get('id');
+
+                const data = await getPost(id);
+
+                document.getElementById('article-title').innerText = data[0].title;     // Set article details
+                document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
+                document.getElementById('article-body').innerText = data[0].post_body;
+    
+                const commentsList = document.getElementById('comments-list');  // Display comments
+
+                if (data[0].comment_id !== null) {                  // Check if there are comments before iterating
+                    data.forEach(comment => {
+                        appendComment(comment);
+                    });
+                } else {
+                    const noCommentsMessage = document.createElement('p');      // Handle the case when there are no comments
+                    noCommentsMessage.innerText = 'No comments yet.';
+                    commentsList.appendChild(noCommentsMessage);
+                }
+
+                const commentForm = document.getElementById('comment-form');    // Comment form submission
+                commentForm.addEventListener('submit', function (event) {
+                    event.preventDefault();     // Prevent the default form submission behavior
+                
+                    const commentTextarea = document.getElementById('comment');
+                    const newCommentBody = commentTextarea.value;
+
+                    const newComment = {    // Add the new comment to the comments list
+                        comment_body: newCommentBody,
+                        comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                    };
+
+                    appendComment(newComment);
+
+                    
+                    commentTextarea.value = ''; // Clear the comment textarea
+                    
+                    // TODO: Fix to make work with comment endpoint
+                    fetch('http://localhost:8000/comment', {    // Make the request to the api (to post the comment to the database)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            body: newCommentBody,
+                            user_id: '1', // Replace with the actual user_id
+                            post_id: data[0].post_id,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log('Comment submitted:', data))
+                    .catch(error => console.error('Error submitting comment:', error));
+                });
+    
+            
+                function appendComment(comment) {       // Append a comment to the comments list
+                    const commentItem = document.createElement('li');
+                    commentItem.className = 'comment-item';
+
+                    const commentContent = document.createElement('div');       // Comment Content
+                    commentContent.className = 'comment-content';
+                    commentContent.innerHTML = comment.comment_body;
+
+                    const commentAuthor = document.createElement('div');                    // Comment Author
+                    commentAuthor.className = 'comment-author';
+                    commentAuthor.innerHTML = `- ${comment.comment_username}`;
+
+                    commentItem.appendChild(commentContent);                        // Append content and author to the comment item
+                    commentItem.appendChild(commentAuthor);
+
+                    commentsList.appendChild(commentItem);
+                }
+            }
+
+            populateBrowser();
+            
+        </script>
+    </div>
+</body>
+
+
+
