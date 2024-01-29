@@ -23,13 +23,17 @@ app.use((req, res, next) => {
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    if(req.path != "/login" && req.body.uid == -1) {
-        res.redirect("/login");
+    const authCookie = req.cookies.current_user;
+    console.log(authCookie);
+    console.log(req.path);
+    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico"){
+        res.status(401).send("Authentication required.");
+    } else {
+        next();
     }
-    next();
 };
 
-//app.use(authChecker);
+app.use(authChecker);
 
 const connLimit = 100;
 
