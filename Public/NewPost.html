@@ -134,9 +134,38 @@
         }
     }
 
-    function submitPost() {
-        console.log()
+    function getUID() {
+        let UIDholder = document.getElementById('uidContainer');
+        let uid = document.cookie.split('=')[1];
+        console.log(uid);
+        return uid;
     }
+
+
+    async function sendPost() {
+        const uid = getUID();
+        const title = document.getElementById('postTitle').value;
+        const body = document.getElementById('postBody').value;
+
+        const data = {
+                "user_id": uid,
+                "title": title,
+                "body": body
+            }
+
+        console.log(uid, title, body);
+        const res = await fetch(`http://127.0.0.1:8000/post`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify(data),
+        });
+
+        // navigate to the created post
+    }
+
+
 </script>
 
 <html>
@@ -159,16 +188,16 @@
     </div>
     <h2>Create Article</h2>
     <div id="content">
-        <form id="post" action="/post" method="post">
-            <textarea id="postTitle" placeholder="Post Title" spellcheck="true" maxlength="200" form="post" rows="3"
-                oninput="checkInput('postTitle')"></textarea>
-            <textarea id="postBody" placeholder="Write your post body here. . ." spellcheck="true" maxlength="1600"
-                form="post" rows="18" oninput="checkInput('postBody')"></textarea>
-            <div id="buttonContainer">
-                <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Post" disabled
-                    style="transition: all 0.5s">
-            </div>
+        <form id="post" action="" method="">
+            <textarea id="postTitle" placeholder="Post Title" name="title" spellcheck="true" maxlength="200" form="post"
+                rows="3" oninput="checkInput('postTitle')"></textarea>
+            <textarea id="postBody" placeholder="Write your post body here. . ." name="body" spellcheck="true"
+                maxlength="1600" form="post" rows="18" oninput="checkInput('postBody')"></textarea>
         </form>
+        <div id="buttonContainer">
+            <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Submit" disabled
+                style="transition: all 0.5s" onclick="sendPost()">
+        </div>
     </div>
 </body>
 
