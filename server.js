@@ -205,6 +205,22 @@ app.patch('/post', function(req, res) {
     )
 });
 
+//Handling the edit comment 
+app.patch('/comment', function(req, res) {
+    
+    pool.query(
+        'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
+        [req.body.body, req.body.comment_id, req.body.post_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error updating the comment.' });
+            } else {
+                res.status(200).json({ message: 'Comment updated successfully.' });
+            }
+        }
+    )
+});
+
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
