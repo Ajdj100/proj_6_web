@@ -2,7 +2,6 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
-const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // Set up express app
@@ -20,21 +19,16 @@ app.use((req, res, next) => {
     }
     next();
 });
-
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    const authCookie = req.cookies.current_user;
-    console.log(authCookie);
-    console.log(req.path);
-    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico"){
-        res.status(401).send("Authentication required.");
-    } else {
-        next();
+    if(req.path != "/login" && req.body.uid == -1) {
+        res.redirect("/login");
     }
+    next();
 };
 
-app.use(authChecker);
+//app.use(authChecker);
 
 const connLimit = 100;
 
@@ -82,6 +76,7 @@ app.post("/login", function(req, res) {
                 res.status(401).send("Invalid credentials");
             }
             else {
+                res.cookie("current_user", results[0])
                 res.status(200).json(results[0]);
             }
         }
@@ -153,6 +148,7 @@ app.post('/signup', function (req, res) {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
+                res.cookie("current_user", results.insertId);
                 res.status(200).json(results.insertId);
             }
         }
@@ -218,10 +214,27 @@ app.get("/profile", function (req, res) {
 //Handling the edit post 
 app.patch('/post', function(req, res) {
     
-    pool.query(
-        'UPDATE post SET title = ?, body = ? WHERE post_id = ?',
-        [req.body.title, req.body.body, req.body.post_id],
-        (error, results) => {
+    let query;
+    let values = [];
+
+    // We Patching both title and Body
+    if (req.body.title && req.body.body) {
+        query = 'UPDATE post SET title = ?, body = ? WHERE post_id = ?';
+        values = [req.body.title, req.body.body, req.body.post_id];
+
+    // We Patching only Title
+    } else if (req.body.title) {
+        query = 'UPDATE post SET title = ? WHERE post_id = ?';
+        values = [req.body.title, req.body.post_id];
+
+    // We Patching only Body
+    } else if (req.body.body) {
+        query = 'UPDATE post SET body = ? WHERE post_id = ?';
+        values = [req.body.body, req.body.post_id];
+    }
+
+   // Execute based on the different scenario
+   pool.query(query, values, (error, results) => {
             if (error) {
                 res.status(500).json({ error: 'Error updating the post.' });
             } else {
@@ -236,7 +249,7 @@ app.patch('/comment', function(req, res) {
     
     pool.query(
         'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
-        [req.body.body, req.body.comment_id, req.body.post_id],
+        [req.body.body, req.body.comment_id, req.body.post],
         (error, results) => {
             if (error) {
                 res.status(500).json({ error: 'Error updating the comment.' });
