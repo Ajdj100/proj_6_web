@@ -176,6 +176,23 @@ app.post('/comment', function (req, res) {
     );
 });
 
+//Handling the edit post 
+app.patch('/post', function(req, res) {
+    
+    pool.query(
+        'UPDATE post SET title = ?, body = ? WHERE post_id = ?',
+        [req.body.title, req.body.body, req.body.post_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error updating the post.' });
+            } else {
+                res.status(200).json({ message: 'Post updated successfully.' });
+            }
+        }
+    )
+});
+
+
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
 });
