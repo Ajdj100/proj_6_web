@@ -144,14 +144,16 @@
                 content += "...";
             }
 
-            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
+            const currentRootUrl = window.location.origin;
+
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('${currentRootUrl}/article?id=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });
     }
 
     function navigateTo(location) {
-        window.location.href = `./${location}.html`
+        window.location.href = `${location}`
     }
 
     function logout() {

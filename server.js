@@ -11,6 +11,15 @@ app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
 app.use(cookieParser());
+app.use((req, res, next) => {
+    if (req.method === 'OPTIONS') {
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
+        res.header('Access-Control-Allow-Headers', 'Content-Type, Cookie');
+        return res.sendStatus(200);
+    }
+    next();
+});
+
 const port = 8000;
 
 const authChecker = function (req, res, next) {
@@ -80,8 +89,9 @@ app.post("/login", function(req, res) {
           
 // Endpoint to return the data of a single post
 app.get("/post", function(req, res) {
-    pool.query(
-        'SELECT p.title, p.body AS post_body, u.username AS post_username, c.comment_id, c.body AS comment_body, cu.username AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
+    console.log("Post ID:", req.query.id);
+    
+    pool.query('SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
         [req.query.id], 
         (error, results) => {
             console.log(results);
@@ -128,6 +138,10 @@ app.get("/posts", function (req, res) {
         );
     }
 });
+
+app.get('/article', function(req, res) {
+    res.sendFile(__dirname + "/public/Article.html");
+})
 
 //Handles user Signup Post request
 app.post('/signup', function (req, res) {  
@@ -181,6 +195,39 @@ app.post('/comment', function (req, res) {
         }
     );
 });
+
+//Handling the edit post 
+app.patch('/post', function(req, res) {
+    
+    pool.query(
+        'UPDATE post SET title = ?, body = ? WHERE post_id = ?',
+        [req.body.title, req.body.body, req.body.post_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error updating the post.' });
+            } else {
+                res.status(200).json({ message: 'Post updated successfully.' });
+            }
+        }
+    )
+});
+
+//Handling the edit comment 
+app.patch('/comment', function(req, res) {
+    
+    pool.query(
+        'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
+        [req.body.body, req.body.comment_id, req.body.post_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).json({ error: 'Error updating the comment.' });
+            } else {
+                res.status(200).json({ message: 'Comment updated successfully.' });
+            }
+        }
+    )
+});
+
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
