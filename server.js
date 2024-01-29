@@ -228,7 +228,7 @@ app.get("/profile", function (req, res) {
 
 
 //Handling the edit post 
-app.patch('/post', function(req, res) {
+app.patch('/patch', function(req, res) {
     
     let query;
     let values = [];
