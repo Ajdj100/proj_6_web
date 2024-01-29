@@ -1,1 +1,220 @@
-Browse
+<link rel="stylesheet" href="./styles.css">
+
+<style scoped>
+    #headerContent {
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: center;
+        padding-left: 50px;
+        padding-right: 50px;
+        max-width: 1000px;
+        margin: auto;
+    }
+
+    #header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding-top: 5px;
+        padding-bottom: 5px;
+        background-color: inherit;
+        filter: drop-shadow(0px 1px 10px #0000003d);
+    }
+
+    h1 {
+        font-size: 55px;
+    }
+
+    body {
+        margin: 0;
+        padding: 0;
+        display: flex;
+        justify-content: center;
+        padding-top: 120px;
+        margin: 0 auto;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    #content {
+        max-width: 1000px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    .lds-facebook {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+        top: 20%
+    }
+
+    .lds-facebook div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: #131313;
+        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+
+    .lds-facebook div:nth-child(1) {
+        left: 8px;
+        animation-delay: -0.24s;
+    }
+
+    .lds-facebook div:nth-child(2) {
+        left: 32px;
+        animation-delay: -0.12s;
+    }
+
+    .lds-facebook div:nth-child(3) {
+        left: 56px;
+        animation-delay: 0;
+    }
+
+    @keyframes lds-facebook {
+        0% {
+            top: 8px;
+            height: 64px;
+        }
+
+        50%,
+        100% {
+            top: 24px;
+            height: 32px;
+        }
+    }
+
+    .article {
+        margin-bottom: 50px;
+    }
+
+    #endmsg {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding-bottom: 80px;
+        padding-left: 40px;
+        padding-right: 40px;
+    }
+
+    #endmsg p {
+        padding-top: 20px;
+    }
+
+    #endmsg * {
+        text-align: center;
+    }
+</style>
+
+<script>
+    async function getArticles(currentArticle) {
+        // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`
+        const res = await fetch(`http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`, {
+            // mode: "no-cors"
+        });
+
+        const data = await res.json();
+        return data;
+    }
+
+    async function populateBrowse() {
+        const data = await getArticles(sessionStorage.getItem("lastArticle"));
+        const table = document.getElementById("browseTable");
+
+        //guard against trying to request more articles when the server has none left to give
+        if (data.length < 1) {
+            document.getElementById('endmsg').style.display = 'flex';
+            window.removeEventListener('scroll', scrollEventListener);
+            return;
+        }
+
+        sessionStorage.setItem("lastArticle", data[data.length - 1].post_id);
+
+        document.getElementById('loader').style.display = 'none';
+        data.forEach(element => {
+            let content = element.body.substring(0, 200);
+            if (element.body.toString().length > 200) {
+                content.substring(0, content.lastIndexOf(' '))
+                content += "...";
+            }
+
+            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
+            let row = table.insertRow();
+            row.innerHTML = body;
+        });
+    }
+
+    function navigateTo(location) {
+        window.location.href = `./${location}.html`
+    }
+
+    function logout() {
+        //TODO: implement login caching and clearing
+
+        window.location.href = './Login.html';
+    }
+
+    function setArticleNum(articleNum) {
+        sessionStorage.setItem("lastArticle", articleNum)
+    }
+
+    const scrollEventListener = () => {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+            populateBrowse();
+        }
+    };
+</script>
+
+<html>
+
+<body>
+    <script>
+        setArticleNum(-1);
+
+        window.addEventListener('scroll', scrollEventListener)
+    </script>
+    <div id="header">
+        <div id="headerContent">
+
+            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                onclick="navigateTo('CreatePost')"></i>
+            <h1>Website Title</h1>
+            <!-- <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i> -->
+            <a href="#" onclick="logout()">logout</a>
+        </div>
+        <!-- <hr> -->
+        <!-- <div id="profileDropdown">
+            <a>My Posts</a>
+        </div> -->
+
+    </div>
+    <h2>Articles</h2>
+    <div id="content">
+        <div id="articles">
+            <table id="browseTable">
+
+            </table>
+            <script>
+                populateBrowse();
+            </script>
+        </div>
+    </div>
+    <div id="endmsg" style="display: none;">
+        <h2>Uh oh! Looks like you've seen everything there is to see.</h2>
+        <p>Come back another time when there are more posts</p>
+    </div>
+    <!-- LOADING ICON -->
+    <div class="lds-facebook" id="loader">
+        <div></div>
+        <div></div>
+        <div></div>
+    </div>
+</body>
+
+</html>

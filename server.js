@@ -12,8 +12,8 @@ app.use(cors());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    if(req.path != '/login' && req.body.uid == -1) {
-        res.redirect('/login');
+    if(req.path != "/login" && req.body.uid == -1) {
+        res.redirect("/login");
     }
     next();
 };
@@ -36,11 +36,11 @@ const pool = mysql.createPool({
 
 // Server routes
 app.get("/", function (req, res) {
-    res.send("Hello World!");
+    res.sendFile(__dirname + "/public/Login.html");
 });
 
 app.get("/queryexample", function(req, res) {
-    pool.query('SELECT * FROM user;', function (error, results, fields) {
+    pool.query("SELECT * FROM user;", function (error, results, fields) {
         if (error) throw error;
         // Write all results to console
         // Write specific element from log
@@ -76,8 +76,7 @@ app.post("/login", function(req, res) {
 app.get("/post", function(req, res) {
     console.log("Post ID:", req.query.id);
     
-    pool.query(
-        'SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
+    pool.query('SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
         [req.query.id], 
         (error, results) => {
             console.log(results);
@@ -94,7 +93,7 @@ app.get("/post", function(req, res) {
 app.get("/posts", function (req, res) {
     if (req.query.current == -1) {
         console.log('requested newest posts');
-        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 5;',
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id ORDER BY post.post_id DESC LIMIT 10;',
             [req.query.limit],
             (error, results) => {
                 console.log(req.query.limit);
@@ -138,10 +137,47 @@ app.post('/signup', function (req, res) {
             if (error) {
                 res.status(500).send("Error Signing up a user");
             } else {
-                res.status(200).json(results[0]);
+                res.status(200).json(results.insertId);
             }
         }
 
+    );
+});
+
+app.get('/browse', function(req, res) {
+    res.sendFile(__dirname + "/public/Browse.html");
+});
+
+//Handles user Post request
+app.post('/post', function (req, res) {  
+    let user_id = req.body.user_id;
+    pool.query(
+        "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
+        [user_id, req.body.title, req.body.body],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error creating a new post");
+            } else {
+                res.status(200).json({ post_id: results.insertId });
+            }
+        }
+
+    );
+});
+
+//Handles user Comment request
+app.post('/comment', function (req, res) {  
+    let user_id = req.body.user_id;
+    pool.query(
+        "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
+        [req.body.body, req.body.post_id, user_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error creating a new comment");
+            } else {
+                res.status(200).json({ comment_id: results.insertId });
+            }
+        }
     );
 });
 
