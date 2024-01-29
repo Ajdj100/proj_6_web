@@ -1,5 +1,3 @@
-<!-- THIS IS ONLY TO BE USED AS REFERENCE FOR THE STYLES -->
-
 <head>
     <link rel="stylesheet" href="/styles.css">
 </head>
@@ -54,8 +52,8 @@
         })
         .then(data => {
             const id = data.user_id;
-            setCookie("current_user", id);
-            window.location.href = "http://localhost:8000/browse";
+            setCookie("current_user", id, "/");
+            window.location.replace("http://localhost:8000/browse");
         })
         .catch(error => {
             console.error("There was an error with the fetch API:", error);
@@ -92,9 +90,9 @@
                 return response.json();
             })
             .then(data => {
-                const id = data.user_id;
-                setCookie("current_user", id);
-                window.location.href = "http://localhost:8000/browse";
+                const id = data.insertId;
+                setCookie("current_user", id, "/");
+                window.location.replace("http://localhost:8000/browse");
             })
             .catch(error => {
                 console.error("There was an error with the fetch API:", error);
