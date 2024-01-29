@@ -82,9 +82,8 @@ app.post("/login", function(req, res) {
           
 // Endpoint to return the data of a single post
 app.get("/post", function(req, res) {
-    console.log("Post ID:", req.query.id);
-    
-    pool.query('SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
+    pool.query(
+        'SELECT p.title, p.body AS post_body, u.username AS post_username, c.comment_id, c.body AS comment_body, cu.username AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
         [req.query.id], 
         (error, results) => {
             console.log(results);
@@ -131,10 +130,6 @@ app.get("/posts", function (req, res) {
         );
     }
 });
-
-app.get('/article', function(req, res) {
-    res.sendFile(__dirname + "/public/Article.html");
-})
 
 //Handles user Signup Post request
 app.post('/signup', function (req, res) {  
