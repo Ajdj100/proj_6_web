@@ -115,7 +115,7 @@
 <script>
     async function getArticles(currentArticle) {
         // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5`, {
+        const res = await fetch(`http://localhost:8000/posts?current=${currentArticle}&limit=5`, {
             // mode: "no-cors"
         });
 

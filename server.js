@@ -2,6 +2,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // Set up express app
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
+app.use(cookieParser());
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') {
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
@@ -17,16 +19,21 @@ app.use((req, res, next) => {
     }
     next();
 });
+
 const port = 8000;
 
 const authChecker = function (req, res, next) {
-    if(req.path != "/login" && req.body.uid == -1) {
-        res.redirect("/login");
+    const authCookie = req.cookies.current_user;
+    console.log(authCookie);
+    console.log(req.path);
+    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico"){
+        res.status(401).send("Authentication required.");
+    } else {
+        next();
     }
-    next();
 };
 
-//app.use(authChecker);
+app.use(authChecker);
 
 const connLimit = 100;
 
