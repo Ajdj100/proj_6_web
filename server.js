@@ -2,6 +2,7 @@
 const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 require('dotenv').config();
 
 // Set up express app
@@ -9,6 +10,7 @@ const app = express();
 app.use(express.json());
 app.use(express.static(__dirname + "/public"));
 app.use(cors());
+app.use(cookieParser());
 const port = 8000;
 
 const authChecker = function (req, res, next) {
@@ -175,6 +177,24 @@ app.post('/comment', function (req, res) {
         }
     );
 });
+
+app.get("/profile", function (req, res) {
+
+    pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = (?);', 
+    [req.cookies.current_user],
+            (error, results) => {
+            console.log(results);
+            if (error) {
+                res.status(500);
+            }
+            else {
+                res.status(200).json(results);
+            }
+        }
+    );
+});
+
+
 
 app.listen(port, function () {
     console.log(`Listening on port ${port}!`);
