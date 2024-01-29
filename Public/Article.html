@@ -153,7 +153,7 @@
             }
 
             async function getUserName(id) {
-                const res = await fetch(`http://127.0.0.1:8000/username?id=${id}`, {
+                const res = await fetch(`http://localhost:8000/username?id=${id}`, {
                     
                 });
 
@@ -162,12 +162,16 @@
             }
 
             async function populateBrowser() {
-                const currentURL = window.location.href;
+                const currentURL = window.location.href;    // Get parameters of post
                 const url = new URL(currentURL);
                 const searchParams = url.searchParams;
                 const id = searchParams.get('id');
 
+                //let uid = document.cookie.split('=');  // Get user id from cookie
+                let uid = 1;        // Replace with above after merge with main
+
                 const data = await getPost(id);
+                const CurrentUser = await getUserName(uid);
 
                 document.getElementById('article-title').innerText = data[0].title;     // Set article details
                 document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
@@ -192,12 +196,9 @@
                     const commentTextarea = document.getElementById('comment');
                     const newCommentBody = commentTextarea.value;
 
-                    let uid = document.cookie.split('=');
-
-                    let CurrentUser = getUserName(uid)
                     const newComment = {    // Add the new comment to the comments list
                         comment_body: newCommentBody,
-                        comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                        comment_username: CurrentUser[0].username, // Current user is returned from the getUserName function 
                     };
 
                     appendComment(newComment);
