@@ -182,17 +182,17 @@
         window.addEventListener('scroll', scrollEventListener)
     </script>
 
-        <div id="header">
-            <div id="headerContent">
-                <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                    onclick="navigateTo('CreatePost')"></i>          
-                    <a onclick="navigateTo('browse')" >browse</a>
-                    <h1>Website Title</h1>
-                <a onclick="navigateTo('profile.html')" >profile</a>
-                <a href="#" onclick="logout()">logout</a>
-            </div>
-
+    <div id="header">
+        <div id="headerContent">
+            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
+                onclick="navigateTo('CreatePost')"></i>
+            <a onclick="navigateTo('browse')">browse</a>
+            <!-- <h1>Website Title</h1> -->
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <a onclick="navigateTo('profile')">profile</a>
+            <a href="#" onclick="logout()">logout</a>
         </div>
+    </div>
     <h2>Articles</h2>
     <div id="content">
         <div id="articles">
