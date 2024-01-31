@@ -167,7 +167,6 @@
     }
 
     const scrollEventListener = () => {
-        console.log(window.scrollY + window.innerHeight, document.documentElement.scrollHeight)
         if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) { 
             //the -1 is a stopgap fix for an issue where new posts would not load because the scrollY would technically be ".3333" too low.
 
