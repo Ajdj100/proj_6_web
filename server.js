@@ -26,7 +26,7 @@ const authChecker = function (req, res, next) {
     const authCookie = req.cookies.current_user;
     console.log(authCookie);
     console.log(req.path);
-    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico"){
+    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico") {
         res.status(401).send("Authentication required.");
     } else {
         next();
@@ -38,15 +38,15 @@ app.use(authChecker);
 const connLimit = 100;
 
 const pool = mysql.createPool({
-    host : process.env.HOST,
-    user : process.env.USER,
-    password : process.env.PASSWORD,
-    database : process.env.DATABASE,
-    port : 3306,
-    connectionLimit : connLimit,
-    enableKeepAlive : true,
-    waitForConnections : true,
-    idleTimeout : 60000
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+    port: 3306,
+    connectionLimit: connLimit,
+    enableKeepAlive: true,
+    waitForConnections: true,
+    idleTimeout: 60000
 });
 
 // Server routes
@@ -54,24 +54,24 @@ app.get("/", function (req, res) {
     res.sendFile(__dirname + "/public/Login.html");
 });
 
-app.get("/queryexample", function(req, res) {
+app.get("/queryexample", function (req, res) {
     pool.query("SELECT * FROM user;", function (error, results, fields) {
         if (error) throw error;
         // Write all results to console
         // Write specific element from log
-        results.forEach( element => {
+        results.forEach(element => {
             console.log(element.username);
         });
         // Return results in res
-        res.status(200).json({user: results})
+        res.status(200).json({ user: results })
     });
 });
 
 // Endpoint to verify user login credentials
-app.post("/login", function(req, res) {
+app.post("/login", function (req, res) {
     pool.query(
         'SELECT user_id from user WHERE username = ? AND password = ?;',
-        [req.body.username, req.body.password], 
+        [req.body.username, req.body.password],
         (error, results) => {
             console.log(results);
             if (error) {
@@ -87,13 +87,13 @@ app.post("/login", function(req, res) {
         }
     );
 });
-          
+
 // Endpoint to return the data of a single post
-app.get("/post", function(req, res) {
+app.get("/post", function (req, res) {
     console.log("Post ID:", req.query.id);
-    
+
     pool.query('SELECT p.post_id, p.title, p.body AS post_body, u.username AS post_username, c.comment_id, IFNULL(c.body, "") AS comment_body, IFNULL(cu.username, "") AS comment_username FROM post p LEFT JOIN comment c ON p.post_id = c.post_id JOIN user u ON p.user_id = u.user_id LEFT JOIN user cu ON c.user_id = cu.user_id WHERE p.post_id = ?;',
-        [req.query.id], 
+        [req.query.id],
         (error, results) => {
             console.log(results);
             if (error) {
@@ -106,9 +106,9 @@ app.get("/post", function(req, res) {
     );
 });
 
-app.get("/username", function(req, res) {
+app.get("/username", function (req, res) {
     pool.query('SELECT username FROM user WHERE user_id=?;',
-        [req.query.id], 
+        [req.query.id],
         (error, results) => {
             console.log(results);
             if (error) {
@@ -155,12 +155,12 @@ app.get("/posts", function (req, res) {
     }
 });
 
-app.get('/article', function(req, res) {
+app.get('/article', function (req, res) {
     res.sendFile(__dirname + "/public/Article.html");
 })
 
 //Handles user Signup Post request
-app.post('/signup', function (req, res) {  
+app.post('/signup', function (req, res) {
     pool.query(
         "INSERT INTO user (username, password) VALUES (?, ?)",
         [req.body.username, req.body.password],
@@ -176,12 +176,12 @@ app.post('/signup', function (req, res) {
     );
 });
 
-app.get('/browse', function(req, res) {
+app.get('/browse', function (req, res) {
     res.sendFile(__dirname + "/public/Browse.html");
 });
 
 //Handles user Post request
-app.post('/post', function (req, res) {  
+app.post('/post', function (req, res) {
     let user_id = req.body.user_id;
     pool.query(
         "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
@@ -198,7 +198,7 @@ app.post('/post', function (req, res) {
 });
 
 //Handles user Comment request
-app.post('/comment', function (req, res) {  
+app.post('/comment', function (req, res) {
     let user_id = req.body.user_id;
     pool.query(
         "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
@@ -214,26 +214,62 @@ app.post('/comment', function (req, res) {
 });
 
 
-app.get("/profile", function (req, res) {
+// app.get("/profile", function (req, res) {
 
-    pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = (?);', 
-    [req.cookies.current_user],
+
+//     pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = (?);',
+//         [req.cookies.current_user],
+//         (error, results) => {
+//             console.log(results);
+//             if (error) {
+//                 res.status(500);
+//             }
+//             else {
+//                 res.status(200).json(results);
+//             }
+//         }
+//     );
+// });
+
+app.get("/profile", function (req, res) {
+    console.log(req.query.current);
+    if (req.query.current == -1) {
+        console.log('requested newest profile posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = ? ORDER BY post.post_id DESC LIMIT 10;',
+            [req.cookies.current_user, req.query.limit],
             (error, results) => {
-            console.log(results);
-            if (error) {
-                res.status(500);
+                console.log(req.query.limit);
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
             }
-            else {
-                res.status(200).json(results);
+        );
+    } else {
+        console.log('requested more profile posts');
+        pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = ? AND post_id < ? ORDER BY post.post_id DESC LIMIT 5;',
+            [req.cookies.current_user, req.query.current, req.query.limit],
+            (error, results) => {
+                console.log(req.query.current, req.query.limit)
+                console.log(results);
+                if (error) {
+                    res.status(500);
+                }
+                else {
+                    res.status(200).json(results);
+                }
             }
-        }
-    );
+        );
+    }
 });
 
 
 //Handling the edit post 
-app.patch('/post', function(req, res) {
-    
+app.patch('/post', function (req, res) {
+
     let query;
     let values = [];
 
@@ -242,33 +278,33 @@ app.patch('/post', function(req, res) {
         query = 'UPDATE post SET title = ?, body = ? WHERE post_id = ?';
         values = [req.body.title, req.body.body, req.body.post_id];
 
-    // We Patching only Title
+        // We Patching only Title
     } else if (req.body.title) {
         query = 'UPDATE post SET title = ? WHERE post_id = ?';
         values = [req.body.title, req.body.post_id];
 
-    // We Patching only Body
+        // We Patching only Body
     } else if (req.body.body) {
         query = 'UPDATE post SET body = ? WHERE post_id = ?';
         values = [req.body.body, req.body.post_id];
     }
 
-   // Execute based on the different scenario
-   pool.query(query, values, (error, results) => {
-            if (error) {
-                res.status(500).json({ error: 'Error updating the post.' });
-            } else {
-                res.status(200).json({ message: 'Post updated successfully.' });
-            }
+    // Execute based on the different scenario
+    pool.query(query, values, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error updating the post.' });
+        } else {
+            res.status(200).json({ message: 'Post updated successfully.' });
         }
+    }
     )
 });
 
 //Handling the edit comment 
-app.patch('/comment', function(req, res) {
-    
+app.patch('/comment', function (req, res) {
+
     pool.query(
-        'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
+        'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?',
         [req.body.body, req.body.comment_id, req.body.post],
         (error, results) => {
             if (error) {
