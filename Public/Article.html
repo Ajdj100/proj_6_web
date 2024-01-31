@@ -3,6 +3,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
     <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
+    <link rel="stylesheet" href="./headerStyles.css">
+    <script src="./headerFuncs.js"></script>
     <style>
         body {
             margin: 0;
@@ -75,28 +77,6 @@
             margin-top: 5px;
         }
 
-        #headerContent {
-            display: flex;
-            flex-direction: row;
-            justify-content: space-between;
-            align-items: center;
-            padding-left: 50px;
-            padding-right: 50px;
-            max-width: 1000px;
-            margin: auto;
-        }
-
-        #header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding-top: 5px;
-            padding-bottom: 5px;
-            background-color: inherit;
-            filter: drop-shadow(0px 1px 10px #0000003d);
-        }
-
         #content {
             margin-top: 20px;
             max-width: 1000px;
@@ -110,22 +90,17 @@
         }
     </style>
 </head>
-<script>
-        function navigateTo(location) {
-        window.location.href = `${location}`
-    }
-</script>
 
 <body>
     <div id="header">
         <div id="headerContent">
-            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="window.location.href = `CreatePost`"></i>
-            <a onclick="window.location.href = `browse`">browse</a>
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
             <!-- <h1>Website Title</h1> -->
             <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
-            <a onclick="window.location.href = `profile.html`">profile</a>
-            <a href="#" onclick="window.location.href = './Login.html';">logout</a>
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
     <div id="content">
