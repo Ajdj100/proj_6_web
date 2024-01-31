@@ -1,28 +1,8 @@
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./headerStyles.css">
+<script src="./headerFuncs.js"></script>
 
 <style scoped>
-    #headerContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 50px;
-        padding-right: 50px;
-        max-width: 1000px;
-        margin: auto;
-    }
-
-    #header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: inherit;
-        filter: drop-shadow(0px 1px 10px #0000003d);
-    }
-
     h1 {
         font-size: 55px;
     }
@@ -150,16 +130,6 @@
         });
     }
 
-    function navigateTo(location) {
-        window.location.href = `./${location}.html`
-    }
-
-    function logout() {
-        //TODO: implement login caching and clearing
-
-        window.location.href = './Login.html';
-    }
-
     function setArticleNum(articleNum) {
         sessionStorage.setItem("lastArticle", articleNum)
     }
@@ -181,13 +151,13 @@
     </script>
     <div id="header">
         <div id="headerContent">
-            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('CreatePost')"></i>          
-                <a onclick="navigateTo('browse')" >browse</a>
-                <!-- <h1>Website Title</h1> -->
-                <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
-            <a onclick="navigateTo('profile')" >profile</a>
-            <a href="#" onclick="logout()">logout</a>
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
+            <!-- <h1>Website Title</h1> -->
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
 
