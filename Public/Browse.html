@@ -1,28 +1,7 @@
 <link rel="stylesheet" href="./styles.css">
-
+<link rel="stylesheet" href="./headerStyles.css">
+<script src="./headerFuncs.js"></script>
 <style scoped>
-    #headerContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 50px;
-        padding-right: 50px;
-        max-width: 1000px;
-        margin: auto;
-    }
-
-    #header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: inherit;
-        filter: drop-shadow(0px 1px 10px #0000003d);
-    }
-
     h1 {
         font-size: 55px;
     }
@@ -150,16 +129,6 @@
             let row = table.insertRow();
             row.innerHTML = body;
         });
-    }
-
-    function navigateTo(location) {
-        window.location.href = `${location}`
-    }
-
-    function logout() {
-        //TODO: implement login caching and clearing
-
-        window.location.href = './Login.html';
     }
 
     function setArticleNum(articleNum) {
