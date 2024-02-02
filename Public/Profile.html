@@ -93,18 +93,16 @@
 </style>
 
 <script>
-    async function getArticles() {
-        // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5` `http://127.0.0.1:8000/profile?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://localhost:8000/profile`, {
-            // mode: "no-cors"
-        });
+    async function getArticles(currentArticle) {
+        let url = `http://localhost:8000/profile?current=${currentArticle}&limit=5`
+        const res = await fetch(url);
 
         const data = await res.json();
         return data;
     }
 
     async function populateBrowse() {
-        const data = await getArticles();
+        const data = await getArticles(sessionStorage.getItem("lastArticle"));
         const table = document.getElementById("browseTable");
 
         //guard against trying to request more articles when the server has none left to give
@@ -135,7 +133,7 @@
     }
 
     const scrollEventListener = () => {
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
             populateBrowse();
         }
     };
@@ -162,7 +160,7 @@
     </div>
 
     <h2>Your Profile</h2>
-    
+
     <div id="content">
         <div id="articles">
             <table id="browseTable">

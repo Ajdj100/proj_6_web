@@ -26,7 +26,7 @@ const authChecker = function (req, res, next) {
     const authCookie = req.cookies.current_user;
     console.log(authCookie);
     console.log(req.path);
-    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico"){
+    if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico") {
         res.status(401).send("Authentication required.");
     } else {
         next();
@@ -38,15 +38,15 @@ app.use(authChecker);
 const connLimit = 100;
 
 const pool = mysql.createPool({
-    host : process.env.HOST,
-    user : process.env.USER,
-    password : process.env.PASSWORD,
-    database : process.env.DATABASE,
-    port : 3306,
-    connectionLimit : connLimit,
-    enableKeepAlive : true,
-    waitForConnections : true,
-    idleTimeout : 60000
+    host: process.env.HOST,
+    user: process.env.USER,
+    password: process.env.PASSWORD,
+    database: process.env.DATABASE,
+    port: 3306,
+    connectionLimit: connLimit,
+    enableKeepAlive: true,
+    waitForConnections: true,
+    idleTimeout: 60000
 });
 
 module.exports.pool = pool;
@@ -76,7 +76,7 @@ app.get("/", function (req, res) {
 //wtf is this even used for
 app.get("/username", function(req, res) {
     pool.query('SELECT username FROM user WHERE user_id=?;',
-        [req.query.id], 
+        [req.query.id],
         (error, results) => {
             console.log(results);
             if (error) {
@@ -90,14 +90,14 @@ app.get("/username", function(req, res) {
 });
 
 
-app.get('/article', function(req, res) {
+app.get('/article', function (req, res) {
     res.sendFile(__dirname + "/public/Article.html");
 })
+
 
 app.get('/browse', function(req, res) {
     res.sendFile(__dirname + "/public/Browse.html");
 });
-
 
 
 app.listen(port, function () {
