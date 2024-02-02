@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./headerStyles.css">
+<script src="./headerFuncs.js"></script>
 
 <style scoped>
     #headerContent {
@@ -108,10 +110,6 @@
 </style>
 
 <script>
-    function navigateTo(location) {
-        window.location.href = location;
-    }
-
     function checkInput(elementID) {
         let element = document.getElementById(elementID);
 
@@ -173,13 +171,13 @@
 <body>
     <div id="header">
         <div id="headerContent">
-            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('CreatePost')"></i>
-            <a onclick="navigateTo('browse')">browse</a>
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
             <!-- <h1>Website Title</h1> -->
             <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
-            <a onclick="navigateTo('profile')">profile</a>
-            <a href="#" onclick="logout()">logout</a>
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
     <h2>Create Article</h2>
