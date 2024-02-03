@@ -76,17 +76,33 @@ router.patch('/', function (req, res) {
 router.delete('/', function (req, res) {
 
     console.log(req.body.post_id);
-    
-    pool.query("DELETE FROM post WHERE post_id = ?; DELETE FROM comment WHERE post_id = ?;",   //todo, create delete query
-        [req.body.post_id, req.body.post_id],
+
+    pool.query("DELETE FROM comment WHERE post_id = ?;",   //todo, create delete query
+        [req.body.post_id],
         (error, results) => {
             if (error) {
                 res.status(500).send("Error deleting the post");
                 console.error(error);
             } else {
-                res.status(200);
+                //awful nested operation
+                pool.query("DELETE FROM post WHERE post_id = ?;",   //todo, create delete query
+                    [req.body.post_id],
+                    (error, results) => {
+                        if (error) {
+                            res.status(500).send("Error deleting the post");
+                            // console.error(error);
+                            return;
+                        } else {
+                            res.status(200).send("Deleted post");
+                        }
+                    }
+                );
             }
         }
-    )   
+    );
+
+
 });
 module.exports = router;
+
+
