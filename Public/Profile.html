@@ -79,13 +79,13 @@
 
     .deleteButton {
         margin-top: 15px;
-        transition: color 0.3s;
+        transition: color 0.2s;
         height: 32px;
     }
 
     .deleteButton:hover {
         color: red;
-        transition: color 0.3s;
+        transition: color 0.2s;
     }
 
     #endmsg {
@@ -143,9 +143,14 @@
     }
 
     function deletePost(postID) {
-        console.log("delete", postID);
         //TODO: Implement delete fetch call
-
+        fetch("http://localhost:8000/post", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ post_id: postID }),
+        })
         // location.reload();   //Put this reload back in to repopulate the thing... or do it by clearing the list and repopulating it if we want to avoid a full reload.
 
     }
