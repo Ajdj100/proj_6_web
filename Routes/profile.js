@@ -5,7 +5,7 @@ var express = require('express'),
 const pool = require('../server.js').pool;
 
 
-app.get("/", function (req, res) {
+router.get("/", function (req, res) {
     console.log(req.query.current);
     if (req.query.current == -1) {
         console.log('requested newest profile posts');
