@@ -1,36 +1,39 @@
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
+
     <link rel="stylesheet" href="./styles.css">
+    <link rel="stylesheet" href="./headerStyles.css">
+    <script src="./headerFuncs.js"></script>
+
     <style>
         body {
-        margin: 0;
-        padding: 0;
-        display: flex;
-        justify-content: center;
-        padding-top: 120px;
-        margin: 0 auto;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            padding-top: 120px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-    
+
         #article-title {
             margin-bottom: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
         }
-    
+
         #article-author {
             font-style: italic;
             color: #555;
             margin-bottom: 30px;
             text-align: center;
         }
-    
+
         #article-body {
             margin-bottom: 30px;
         }
@@ -38,10 +41,10 @@
         #comment-form label {
             font-size: 1.2rem;
             margin-top: 10px;
-            font-family: 'Roboto', sans-serif; 
+            font-family: 'Roboto', sans-serif;
         }
 
-        #comment-form button {  
+        #comment-form button {
             margin-top: 10px;
             margin-left: 30px;
         }
@@ -51,7 +54,7 @@
             margin-left: 15px;
             font-family: 'Roboto', sans-serif;
         }
-    
+
         .comments-section {
             background-color: #ffffff;
             border-radius: 8px;
@@ -59,91 +62,59 @@
             padding: 20px;
             text-align: left;
         }
-    
+
         .comment-item {
             list-style-type: none;
             margin: 0;
             padding: 10px 0;
             border-bottom: 1px solid #ccc;
         }
-    
+
         .comment-content {
-            font-family: 'Roboto', sans-serif; 
+            font-family: 'Roboto', sans-serif;
         }
-    
+
         .comment-author {
             font-style: italic;
             color: #555;
-            margin-top: 5px; 
-        }
-
-        #headerContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 50px;
-        padding-right: 50px;
-        max-width: 1000px;
-        margin: auto;
-        }
-
-        #header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: inherit;
-        filter: drop-shadow(0px 1px 10px #0000003d);
+            margin-top: 5px;
         }
 
         #content {
-        margin-top: 20px;
-        max-width: 1000px;
-        padding-left: 40px;
-        padding-right: 40px;
+            margin-top: 20px;
+            max-width: 1000px;
+            padding-left: 40px;
+            padding-right: 40px;
         }
 
         #label {
-            font-family: 'Roboto', sans-serif; 
+            font-family: 'Roboto', sans-serif;
             text-align: start;
         }
     </style>
 </head>
 
-    <body>
-        <div id="header">
-            <div id="headerContent">
-                <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                    onclick="navigateTo('CreatePost')"></i>          
-                    <a onclick="navigateTo('browse')" >browse</a>
-                    <h1>Website Title</h1>
-                <a onclick="navigateTo('profile')" >profile</a>
-                <a href="#" onclick="logout()">logout</a>
-            </div>
-        </div>
-    </div>
-
 <body>
     <div id="header">
         <div id="headerContent">
-            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('CreatePost')"></i>
-            <h1 style="font-size: 55px;">Website Title</h1>
-            <a href="#" onclick="logout()">logout</a>
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
+            <!-- <h1>Website Title</h1> -->
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
 
     <div id="content">
- 
+
         <h2 id="article-title"></h2>
-    
+
         <h2 id="article-author"></h2>
-     
+
         <p id="article-body"></p>
-        
+
         <div class="comments-section">
             <h2>Comments</h2>
             <ul id="comments-list"></ul>
@@ -154,7 +125,7 @@
                 <button type="submit">Submit</button>
             </form>
         </div>
-    
+
         <script>
             async function getPost(id) {
                 const res = await fetch(`http://localhost:8000/post?id=${id}`, {
@@ -189,7 +160,7 @@
                 document.getElementById('article-title').innerText = data[0].title;     // Set article details
                 document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
                 document.getElementById('article-body').innerText = data[0].post_body;
-    
+
                 const commentsList = document.getElementById('comments-list');  // Display comments
 
                 if (data[0].comment_id !== null) {                  // Check if there are comments before iterating
@@ -207,7 +178,7 @@
 
                 commentForm.addEventListener('submit', function (event) {
                     event.preventDefault();     // Prevent the default form submission behavior
-                
+
                     const commentTextarea = document.getElementById('comment');
                     const newCommentBody = commentTextarea.value;
 
@@ -278,7 +249,7 @@
             }
 
             populateBrowser();
-            
+
         </script>
     </div>
 </body>
