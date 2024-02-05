@@ -111,7 +111,7 @@ app.get("/username", function(req, res) {
                 res.status(500);
             }
             else {
-                res.status(200).json(results);
+                res.status(200).json(results[0]);
             }
         }
     );
