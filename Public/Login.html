@@ -27,7 +27,7 @@
 
     function login() {
         const url = "http://localhost:8000/login"
-        current_username = document.getElementById("username").value
+        const current_username = document.getElementById("username").value
         const json = {
             username : current_username,
             password : document.getElementById("password").value
