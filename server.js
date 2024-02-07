@@ -73,23 +73,6 @@ app.get("/", function (req, res) {
     res.sendFile(__dirname + "/public/Login.html");
 });
 
-//wtf is this even used for
-app.get("/username", function(req, res) {
-    pool.query('SELECT username FROM user WHERE user_id=?;',
-        [req.query.id],
-        (error, results) => {
-            console.log(results);
-            if (error) {
-                res.status(500);
-            }
-            else {
-                res.status(200).json(results[0]);
-            }
-        }
-    );
-});
-
-
 app.get('/article', function (req, res) {
     res.sendFile(__dirname + "/public/Article.html");
 })
