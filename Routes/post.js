@@ -24,7 +24,7 @@ router.get("/", function (req, res) {
 });
 
 //Handles user Post request
-router.post('/', function (req, res) {  
+router.post('/', function (req, res) {
     let user_id = req.body.user_id;
     pool.query(
         "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
@@ -41,8 +41,8 @@ router.post('/', function (req, res) {
 });
 
 //Handling the edit post 
-router.patch('/', function(req, res) {
-    
+router.patch('/', function (req, res) {
+
     let query;
     let values = [];
 
@@ -51,26 +51,58 @@ router.patch('/', function(req, res) {
         query = 'UPDATE post SET title = ?, body = ? WHERE post_id = ?';
         values = [req.body.title, req.body.body, req.body.post_id];
 
-    // We Patching only Title
+        // We Patching only Title
     } else if (req.body.title) {
         query = 'UPDATE post SET title = ? WHERE post_id = ?';
         values = [req.body.title, req.body.post_id];
 
-    // We Patching only Body
+        // We Patching only Body
     } else if (req.body.body) {
         query = 'UPDATE post SET body = ? WHERE post_id = ?';
         values = [req.body.body, req.body.post_id];
     }
 
-   // Execute based on the different scenario
-   pool.query(query, values, (error, results) => {
-            if (error) {
-                res.status(500).json({ error: 'Error updating the post.' });
-            } else {
-                res.status(200).json({ message: 'Post updated successfully.' });
-            }
+    // Execute based on the different scenario
+    pool.query(query, values, (error, results) => {
+        if (error) {
+            res.status(500).json({ error: 'Error updating the post.' });
+        } else {
+            res.status(200).json({ message: 'Post updated successfully.' });
         }
-    )
+    })
 });
 
+//Handling the edit post 
+router.delete('/', function (req, res) {
+
+    console.log(req.body.post_id);
+
+    pool.query("DELETE FROM comment WHERE post_id = ?;",   //todo, create delete query
+        [req.body.post_id],
+        (error, results) => {
+            if (error) {
+                res.status(500).send("Error deleting the post");
+                console.error(error);
+            } else {
+                //awful nested operation
+                pool.query("DELETE FROM post WHERE post_id = ?;",   //todo, create delete query
+                    [req.body.post_id],
+                    (error, results) => {
+                        if (error) {
+                            res.status(500).send("Error deleting the post");
+                            // console.error(error);
+                            return;
+                        } else {
+                            res.status(200).send("Deleted post");
+                        }
+                    }
+                );
+            }
+        }
+    );
+
+
+});
 module.exports = router;
+
+
