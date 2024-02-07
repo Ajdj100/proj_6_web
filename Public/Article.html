@@ -2,9 +2,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Article</title>
-    <link rel="stylesheet" href="./styles.css"> <!-- Reference to your stylesheet -->
+
+    <link rel="stylesheet" href="./styles.css">
     <link rel="stylesheet" href="./headerStyles.css">
     <script src="./headerFuncs.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -50,6 +52,7 @@
         #comment-form textarea {
             margin-top: 20px;
             margin-left: 15px;
+            font-family: 'Roboto', sans-serif;
         }
 
         .comments-section {
@@ -103,6 +106,7 @@
             <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
+
     <div id="content">
 
         <h2 id="article-title"></h2>
@@ -114,11 +118,10 @@
         <div class="comments-section">
             <h2>Comments</h2>
             <ul id="comments-list"></ul>
-
-
+            
             <form id="comment-form">
-                <label for="comment">Add a Comment:</label> <!--I know these look bad but they refuse to line up-->
-                <textarea id="comment" name="comment" rows="4" cols="50" required></textarea>
+                <label for="comment">Add a Comment:</label>     <!--I know these look bad but they refuse to line up--> 
+                <textarea id="comment" name="comment" rows="4" cols="50"></textarea>
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -133,13 +136,26 @@
                 return data;
             }
 
+            async function getCurrentUser(id) {
+                const res = await fetch(`http://localhost:8000/username?id=${id}`, {
+                    
+                });
+
+                const data = await res.json();
+                return data;
+            }
+
             async function populateBrowser() {
-                const currentURL = window.location.href;
+
+                const currentURL = window.location.href;    // Get parameters of url
                 const url = new URL(currentURL);
                 const searchParams = url.searchParams;
-                const id = searchParams.get('id');
+                const id = searchParams.get('id');      // Get postid from url
+
+                const uid = getCookie('current_user');
 
                 const data = await getPost(id);
+                const CurrentUser = await getCurrentUser(uid);
 
                 document.getElementById('article-title').innerText = data[0].title;     // Set article details
                 document.getElementById('article-author').innerText = `Author: ${data[0].post_username}`;
@@ -154,44 +170,34 @@
                 } else {
                     const noCommentsMessage = document.createElement('p');      // Handle the case when there are no comments
                     noCommentsMessage.innerText = 'No comments yet.';
+                    noCommentsMessage.id = 'no-comments-message';
                     commentsList.appendChild(noCommentsMessage);
                 }
 
                 const commentForm = document.getElementById('comment-form');    // Comment form submission
+
                 commentForm.addEventListener('submit', function (event) {
                     event.preventDefault();     // Prevent the default form submission behavior
 
                     const commentTextarea = document.getElementById('comment');
                     const newCommentBody = commentTextarea.value;
 
-                    const newComment = {    // Add the new comment to the comments list
+                    const newComment = {    
                         comment_body: newCommentBody,
-                        comment_username: 'CurrentUser', // You can replace this with the actual username or user data
+                        comment_username: CurrentUser.username, // Current user is returned from the getUserName function 
                     };
-
-                    appendComment(newComment);
-
+                    appendComment(newComment);      // Add the new comment to the comments list
+                    
+                    const noCommentsMessage = document.getElementById('no-comments-message');
+                    if (noCommentsMessage) {
+                        commentsList.removeChild(noCommentsMessage)
+                    }
 
                     commentTextarea.value = ''; // Clear the comment textarea
-
-                    // TODO: Fix to make work with comment endpoint
-                    fetch('http://localhost:8000/comment', {    // Make the request to the api (to post the comment to the database)
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            body: newCommentBody,
-                            user_id: '1', // Replace with the actual user_id
-                            post_id: data[0].post_id,
-                        }),
-                    })
-                        .then(response => response.json())
-                        .then(data => console.log('Comment submitted:', data))
-                        .catch(error => console.error('Error submitting comment:', error));
+                    
+                    postCommentToDatabase(newCommentBody, data[0].post_id, uid);
                 });
-
-
+            
                 function appendComment(comment) {       // Append a comment to the comments list
                     const commentItem = document.createElement('li');
                     commentItem.className = 'comment-item';
@@ -208,6 +214,37 @@
                     commentItem.appendChild(commentAuthor);
 
                     commentsList.appendChild(commentItem);
+                }
+                
+                function postCommentToDatabase(newCommentBody, newPostID, uid) {
+                    fetch('http://localhost:8000/comment', {    // Make the request to the api (to post the comment to the database)
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            body: newCommentBody,
+                            post_id: newPostID,
+                            user_id: uid,
+                        }),
+                    })
+                    .then(response => response.json())
+                    .then(data => console.log('Comment submitted:', data))
+                    .catch(error => console.error('Error submitting comment:', error));
+                }
+
+                function getCookie(name) {
+                    const cookieName = `${name}=`;
+                    const cookies = document.cookie.split(';');
+
+                    for (let i = 0; i < cookies.length; i++) {
+                        let cookie = cookies[i].trim();
+                        if (cookie.indexOf(cookieName) === 0) {
+                        return cookie.substring(cookieName.length, cookie.length);
+                        }
+                    }
+
+                    return null;
                 }
             }
 
