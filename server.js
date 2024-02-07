@@ -176,6 +176,8 @@ app.get('/browse', function(req, res) {
     res.sendFile(__dirname + "/public/Browse.html");
 });
 
+
+
 //Handles user Post request
 app.post('/post', function (req, res) {  
     let user_id = req.body.user_id;
@@ -226,12 +228,18 @@ app.get("/profile", function (req, res) {
     );
 });
 
+//Handle navigation to edit post page
+app.get('/editpost', function(req, res) {
+
+    res.sendFile(__dirname + "/public/editpost.html");
+});
 
 //Handling the edit post 
 app.patch('/patch', function(req, res) {
-    
+       
     let query;
     let values = [];
+    let post_id = req.body.post_id;
 
     // We Patching both title and Body
     if (req.body.title && req.body.body) {
