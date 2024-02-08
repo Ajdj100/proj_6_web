@@ -3,12 +3,12 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-require('dotenv').config();
+require('dotenv').config({ override: true });
 
 // Set up express app
 const app = express();
 app.use(express.json());
-app.use(express.static(__dirname + "/public"));
+app.use(express.static(__dirname + "/Public"));
 app.use(cors());
 app.use(cookieParser());
 
@@ -70,7 +70,7 @@ app.use('/profile', profileRoutes);
 
 // Server routes
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/public/Login.html");
+    res.sendFile(__dirname + "/Public/Login.html");
 });
 
 //wtf is this even used for
@@ -91,12 +91,12 @@ app.get("/username", function(req, res) {
 
 
 app.get('/article', function (req, res) {
-    res.sendFile(__dirname + "/public/Article.html");
+    res.sendFile(__dirname + "/Public/Article.html");
 })
 
 
 app.get('/browse', function(req, res) {
-    res.sendFile(__dirname + "/public/Browse.html");
+    res.sendFile(__dirname + "/Public/Browse.html");
 });
 
 
