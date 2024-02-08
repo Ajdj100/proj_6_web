@@ -4,40 +4,47 @@ var express = require('express'),
     router = express.Router();
 const pool = require('../server.js').pool;
 
-
 //Handling the edit comment 
 router.patch('/', function(req, res) {
-    
+    console.log(`METHOD: ${req.method}`);
     pool.query(
         'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
         [req.body.body, req.body.comment_id, req.body.post],
         (error, results) => {
+            console.log(`QUERY: ${JSON.stringify(results, 0, 2)}`);
+            let status = 0;
             if (error) {
-                res.status(500).json({ error: 'Error updating the comment.' });
+                status = 500;
+                res.status(status).json({ error: 'Error updating the comment.' });
             } else {
-                res.status(200).json({ message: 'Comment updated successfully.' });
+                status = 200;
+                res.status(status).json({ message: 'Comment updated successfully.' });
             }
+            console.log(`RES: ${status}`);
         }
     )
 });
 
-
 //Handles user Comment request
 router.post('/', function (req, res) {  
+    console.log(`METHOD: ${req.method}`);
     let user_id = req.body.user_id;
     pool.query(
         "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
         [req.body.body, req.body.post_id, user_id],
         (error, results) => {
+            console.log(`QUERY: ${JSON.stringify(results, 0, 2)}`);
+            let status = 0;
             if (error) {
-                res.status(500).send("Error creating a new comment");
+                status = 500;
+                res.status(status).send("Error creating a new comment");
             } else {
-                res.status(200).json({ comment_id: results.insertId });
+                status = 200;
+                res.status(status).json({ comment_id: results.insertId });
             }
+            console.log(`RES: ${status}`);
         }
     );
 });
-
-
 
 module.exports = router;
