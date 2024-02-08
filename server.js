@@ -78,6 +78,8 @@ app.get("/", function (req, res) {
     let sendPage = "/Public/Login.html";
     res.sendFile(__dirname + sendPage);
     console.log(`SERVE: ${sendPage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 });
 
 //wtf is this even used for
@@ -107,6 +109,8 @@ app.get('/article', function (req, res) {
     let articlePage = "/Public/Article.html";
     res.sendFile(__dirname + articlePage);
     console.log(`SERVE: ${articlePage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 })
 
 app.get('/browse', function(req, res) {
@@ -114,6 +118,8 @@ app.get('/browse', function(req, res) {
     let browsePage = "/Public/Browse.html";
     res.sendFile(__dirname + browsePage);
     console.log(`SERVE: ${browsePage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 });
 
 app.listen(port, function () {
