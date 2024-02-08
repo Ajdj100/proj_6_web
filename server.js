@@ -82,28 +82,6 @@ app.get("/", function (req, res) {
     console.log(`RES: ${status}`);
 });
 
-//wtf is this even used for
-app.get("/username", function(req, res) {
-    console.log(`METHOD: ${req.method}`);
-    pool.query('SELECT username FROM user WHERE user_id=?;',
-        [req.query.id],
-        (error, results) => {
-            console.log(`QUERY: ${JSON.stringify(results, 0, 2)}`);
-            let status = 0;
-            console.log(results);
-            if (error) {
-                status = 500;
-                res.status(status);
-            }
-            else {
-                status = 200;
-                res.status(status).json(results[0]);
-            }
-            console.log(`RES: ${status}`);
-        }
-    );
-});
-
 app.get('/article', function (req, res) {
     console.log(`METHOD: ${req.method}`);
     let articlePage = "/Public/Article.html";
