@@ -245,7 +245,6 @@ app.patch('/patch', function(req, res) {
     if (req.body.title && req.body.body) {
         query = 'UPDATE post SET title = ?, body = ? WHERE post_id = ?';
         values = [req.body.title, req.body.body, req.body.post_id];
-
     // We Patching only Title
     } else if (req.body.title) {
         query = 'UPDATE post SET title = ? WHERE post_id = ?';
@@ -261,8 +260,10 @@ app.patch('/patch', function(req, res) {
    pool.query(query, values, (error, results) => {
             if (error) {
                 res.status(500).json({ error: 'Error updating the post.' });
+
             } else {
                 res.status(200).json({ message: 'Post updated successfully.' });
+
             }
         }
     )

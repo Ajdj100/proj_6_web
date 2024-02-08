@@ -127,7 +127,7 @@
         let inputElements = document.getElementsByTagName('textarea');
         let submitButton = document.getElementById("sendPost");
 
-        if (inputElements[0].value.length > 0 && inputElements[1].value.length > 0) {
+        if (inputElements[0].value.length > 0 || inputElements[1].value.length > 0) {
             submitButton.classList.remove('disabledButton');
             submitButton.disabled = false;
         } else {
@@ -173,12 +173,12 @@
 
         const data = {
                 "title": title,
-                "body": body
+                "body": body,
+                "post_id": postID
             }
 
-        console.log(uid, title, body);
-        const res = await fetch(`http://127.0.0.1:8000/patch?post_id=${postID}`, {
-            method: "patch",
+        const res = await fetch(`http://localhost:8000/patch`, {
+            method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
             },
@@ -215,7 +215,7 @@
         </div>
 
     </div>
-    <h2>Create Article</h2>
+    <h2>Edit Article</h2>
     
         <div id="postID"></div>
         <form id="post" action="" method="">
