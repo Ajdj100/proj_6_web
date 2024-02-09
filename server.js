@@ -3,7 +3,7 @@ const express = require('express');
 const mysql = require('mysql2');
 const cors = require('cors');
 const cookieParser = require('cookie-parser');
-require('dotenv').config({ override: true });
+require('dotenv').config({ override: true })
 
 // Set up express app
 const app = express();
@@ -14,9 +14,12 @@ app.use(cookieParser());
 
 app.use((req, res, next) => {
     if (req.method === 'OPTIONS') {
+        console.log(`METHOD: ${req.method}`);
         res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE');
         res.header('Access-Control-Allow-Headers', 'Content-Type, Cookie');
-        return res.sendStatus(200);
+        const status = 200;
+        console.log(`RES: ${status}`);
+        return res.sendStatus(status);
     }
     next();
 });
@@ -24,10 +27,13 @@ const port = 8000;
 
 const authChecker = function (req, res, next) {
     const authCookie = req.cookies.current_user;
-    console.log(authCookie);
-    console.log(req.path);
+    console.log("--------");
+    console.log(`USER ID: ${authCookie}`);
+    console.log(`REQ: ${req.path}`);
     if (!authCookie && req.path != "/" && req.path != "/login" && req.path != "/signup" && req.path != "/favicon.ico") {
-        res.status(401).send("Authentication required.");
+        const status = 401;
+        console.log(`RES: ${status}`);
+        res.status(status).send("Authentication required.");
     } else {
         next();
     }
@@ -65,73 +71,33 @@ app.use('/posts', postsRoutes);
 app.use('/login', loginRoutes);
 app.use('/signup', signUpRoutes);
 app.use('/profile', profileRoutes);
-// app.use('/signup', signUpRoutes);
-
 
 // Server routes
 app.get("/", function (req, res) {
-    res.sendFile(__dirname + "/Public/Login.html");
+    console.log(`METHOD: ${req.method}`);
+    let sendPage = "/Public/Login.html";
+    res.sendFile(__dirname + sendPage);
+    console.log(`SERVE: ${sendPage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 });
 
 app.get('/article', function (req, res) {
-    res.sendFile(__dirname + "/Public/Article.html");
-})
-
+    console.log(`METHOD: ${req.method}`);
+    let articlePage = "/Public/Article.html";
+    res.sendFile(__dirname + articlePage);
+    console.log(`SERVE: ${articlePage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
+});
 
 app.get('/browse', function(req, res) {
-    res.sendFile(__dirname + "/Public/Browse.html");
-});
-
-
-
-//Handles user Post request
-app.post('/post', function (req, res) {  
-    let user_id = req.body.user_id;
-    pool.query(
-        "INSERT INTO post (user_id, title, body) VALUES (?, ?, ?)",
-        [user_id, req.body.title, req.body.body],
-        (error, results) => {
-            if (error) {
-                res.status(500).send("Error creating a new post");
-            } else {
-                res.status(200).json({ post_id: results.insertId });
-            }
-        }
-
-    );
-});
-
-//Handles user Comment request
-app.post('/comment', function (req, res) {  
-    let user_id = req.body.user_id;
-    pool.query(
-        "INSERT INTO comment (body, post_id, user_id) VALUES (?, ?, ?)",
-        [req.body.body, req.body.post_id, user_id],
-        (error, results) => {
-            if (error) {
-                res.status(500).send("Error creating a new comment");
-            } else {
-                res.status(200).json({ comment_id: results.insertId });
-            }
-        }
-    );
-});
-
-
-app.get("/profile", function (req, res) {
-
-    pool.query('SELECT username, post_id, title, body FROM post INNER JOIN user ON post.user_id = user.user_id WHERE post.user_id = (?);', 
-    [req.cookies.current_user],
-            (error, results) => {
-            console.log(results);
-            if (error) {
-                res.status(500);
-            }
-            else {
-                res.status(200).json(results);
-            }
-        }
-    );
+    console.log(`METHOD: ${req.method}`);
+    let browsePage = "/Public/Browse.html";
+    res.sendFile(__dirname + browsePage);
+    console.log(`SERVE: ${browsePage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 });
 
 //Handle navigation to edit post page
@@ -140,7 +106,7 @@ app.get('/editpost', function(req, res) {
     res.sendFile(__dirname + "/public/editpost.html");
 });
 
-//Handling the edit post 
+//Handling the edit post
 app.patch('/patch', function(req, res) {
        
     let query;
@@ -175,24 +141,7 @@ app.patch('/patch', function(req, res) {
     )
 });
 
-//Handling the edit comment 
-app.patch('/comment', function(req, res) {
-    
-    pool.query(
-        'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
-        [req.body.body, req.body.comment_id, req.body.post],
-        (error, results) => {
-            if (error) {
-                res.status(500).json({ error: 'Error updating the comment.' });
-            } else {
-                res.status(200).json({ message: 'Comment updated successfully.' });
-            }
-        }
-    )
-});
-
-
-
 app.listen(port, function () {
-    console.log(`Listening on port ${port}!`);
+    let address = `http://localhost:${port}`;
+    console.log(`Listening on ${address}`);
 });
