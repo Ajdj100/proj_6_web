@@ -1,28 +1,8 @@
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./headerStyles.css">
+<script src="./headerFuncs.js"></script>
 
 <style scoped>
-    #headerContent {
-        display: flex;
-        flex-direction: row;
-        justify-content: space-between;
-        align-items: center;
-        padding-left: 50px;
-        padding-right: 50px;
-        max-width: 1000px;
-        margin: auto;
-    }
-
-    #header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding-top: 5px;
-        padding-bottom: 5px;
-        background-color: inherit;
-        filter: drop-shadow(0px 1px 10px #0000003d);
-    }
-
     h1 {
         font-size: 55px;
     }
@@ -92,6 +72,20 @@
 
     .article {
         margin-bottom: 50px;
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    .deleteButton {
+        margin-top: 15px;
+        transition: color 0.2s;
+        height: 32px;
+    }
+
+    .deleteButton:hover {
+        color: red;
+        transition: color 0.2s;
     }
 
     #endmsg {
@@ -113,18 +107,16 @@
 </style>
 
 <script>
-    async function getArticles() {
-        // let url = `http://127.0.0.1:8000/posts?current=${currentArticle}&limit=5` `http://127.0.0.1:8000/profile?current=${currentArticle}&limit=5`
-        const res = await fetch(`http://localhost:8000/profile`, {
-            // mode: "no-cors"
-        });
+    async function getArticles(currentArticle) {
+        let url = `http://localhost:8000/profile?current=${currentArticle}&limit=5`
+        const res = await fetch(url);
 
         const data = await res.json();
         return data;
     }
 
     async function populateBrowse() {
-        const data = await getArticles();
+        const data = await getArticles(sessionStorage.getItem("lastArticle"));
         const table = document.getElementById("browseTable");
 
         //guard against trying to request more articles when the server has none left to give
@@ -144,20 +136,23 @@
                 content += "...";
             }
 
-            const body = `<div class="article" style="cursor: pointer;" onclick="navigateTo('./Article.html?article=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div>`
+            const body = `<div class="article" style="cursor: pointer;"><div class="articleBody" onclick="navigateTo('./Article.html?id=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div> <i class="bi bi-x-lg deleteButton" style="font-size: 2rem; cursor: pointer;" onclick="deletePost(${element.post_id})"></i></div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });
     }
 
-    function navigateTo(location) {
-        window.location.href = `./${location}.html`
-    }
+    function deletePost(postID) {
+        //TODO: Implement delete fetch call
+        fetch("http://localhost:8000/post", {
+            method: "DELETE",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({ post_id: postID }),
+        })
+        location.reload();
 
-    function logout() {
-        //TODO: implement login caching and clearing
-
-        window.location.href = './Login.html';
     }
 
     function setArticleNum(articleNum) {
@@ -165,7 +160,7 @@
     }
 
     const scrollEventListener = () => {
-        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight) {
+        if (window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 1) {
             populateBrowse();
         }
     };
@@ -181,17 +176,18 @@
     </script>
     <div id="header">
         <div id="headerContent">
-            <i class="bi bi-sticky-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('CreatePost')"></i>          
-                <a onclick="navigateTo('browse')" >browse</a>
-                <h1>Website Title</h1>
-            <a onclick="navigateTo('profile')" >profile</a>
-            <a href="#" onclick="logout()">logout</a>
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
+            <!-- <h1>Website Title</h1> -->
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
     </div>
 
     <h2>Your Profile</h2>
-    
+
     <div id="content">
         <div id="articles">
             <table id="browseTable">

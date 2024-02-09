@@ -1,4 +1,6 @@
 <link rel="stylesheet" href="./styles.css">
+<link rel="stylesheet" href="./headerStyles.css">
+<script src="./headerFuncs.js"></script>
 
 <style scoped>
     #headerContent {
@@ -105,13 +107,48 @@
         flex-direction: column;
         align-items: end;
     }
+
+    #prompt {
+        font-family: "Roboto", sans-serif;
+        font-weight: 400;
+        font-style: normal;
+        font-size: large;
+        display: none;
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        padding: 5px;
+        background-color: #f7f7f7;
+        border: 2px solid;
+        box-sizing: border-box;
+    }
+
+    #promptMessage {
+        flex-grow: 1;
+        text-align: center;
+        box-sizing: border-box;
+    }
+
+    #closePromptButton {
+        justify-content: right;
+        margin-left: 5px;
+        margin-right: 5px;
+        box-sizing: border-box;
+    }
+
+    #prompt.promptSuccess {
+        color: #90ee90 !important;
+        border-color: #90ee90;
+    }
+
+    #prompt.promptFailure {
+        color: #f08080 !important;
+        border-color: #f08080;
+    }
 </style>
 
 <script>
-    function navigateTo(location) {
-        window.location.href = location;
-    }
-
     function checkInput(elementID) {
         let element = document.getElementById(elementID);
 
@@ -141,20 +178,19 @@
         return uid;
     }
 
-
     async function sendPost() {
         const uid = getUID();
         const title = document.getElementById('postTitle').value;
         const body = document.getElementById('postBody').value;
 
         const data = {
-                "user_id": uid,
-                "title": title,
-                "body": body
-            }
+            "user_id": uid,
+            "title": title,
+            "body": body
+        }
 
         console.log(uid, title, body);
-        const res = await fetch(`http://127.0.0.1:8000/post`, {
+        const res = await fetch(`http://localhost:8000/post`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -162,9 +198,35 @@
             body: JSON.stringify(data),
         });
 
-        // navigate to the created post
+        if (res.status == 200) {
+            showNewPostPrompt(true);
+        } else {
+          showNewPostPrompt(false, res.statusText)   
+        }
     }
 
+    function showNewPostPrompt(success, responseMsg="") {
+        let prompt = document.getElementById("prompt");
+        let promptClass = prompt.classList;
+        let promptMessage = document.getElementById("promptMessage");
+        
+        if (success === true) {
+            promptMessage.innerHTML = "New post created successfully";
+            promptClass.remove('promptFailure'); 
+            promptClass.add('promptSuccess');
+        } else {
+            promptMessage.innerHTML = "An error occurred while creating post: " + responseMsg;
+            promptClass.remove('promptSuccess');
+            promptClass.add('promptFailure'); 
+        }
+
+        prompt.style.display = "flex"
+    }
+    
+    function hideNewPostPrompt() {
+        let prompt = document.getElementById("prompt");
+        prompt.style.display = "none"
+    }
 
 </script>
 
@@ -173,19 +235,22 @@
 <body>
     <div id="header">
         <div id="headerContent">
+            <i class="bi bi-plus-square" style="font-size: 2.5rem; cursor: pointer;"
+                onclick="navigateTo('NewPost')"></i>
+            <i class="bi bi-book" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Browse')"></i>
+            <!-- <h1>Website Title</h1> -->
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <i class="bi bi-person" style="font-size: 2.5rem; cursor: pointer;" onclick="navigateTo('Profile')"></i>
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
 
-            <i class="bi bi-arrow-left-circle-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('Browse.html')"></i>
-            <h1>Website Title</h1>
-            <!-- <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i> -->
-            <a href="#" onclick="logout()">logout</a>
         </div>
-        <!-- <hr> -->
-        <!-- <div id="profileDropdown">
-            <a>My Posts</a>
-        </div> -->
-
     </div>
+        <div>
+            <i id="prompt">
+                <div id="promptMessage">New post created successfully!</div>
+                <span class="button bi bi-x-lg" id="closePromptButton" onclick="hideNewPostPrompt()"></span>
+            </i>
+        </div>
     <h2>Create Article</h2>
     <div id="content">
         <form id="post" action="" method="">
