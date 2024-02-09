@@ -146,8 +146,7 @@ if (cluster.isMaster) {
                 res.status(200).json({ message: 'Post updated successfully.' });
 
             }
-        }
-        )
+        })
     });
 
     app.listen(port, function () {
