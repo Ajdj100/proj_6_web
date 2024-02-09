@@ -41,6 +41,7 @@
             body: JSON.stringify(json),
         })
         .then(response => {
+            console.log(response.status);
             if (response.status === 401) {
                 displayError("Invalid credentials.");
                 throw new Error("Invalid credentials");

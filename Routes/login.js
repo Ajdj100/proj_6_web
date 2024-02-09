@@ -14,6 +14,7 @@ router.post("/", function(req, res) {
             console.log(results);
             if (error) {
                 res.status(500);
+                console.log(error);
             }
             else if (!results.length) {
                 res.status(401).send("Invalid credentials");
