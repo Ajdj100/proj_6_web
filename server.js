@@ -102,43 +102,12 @@ app.get('/browse', function(req, res) {
 
 //Handle navigation to edit post page
 app.get('/editpost', function(req, res) {
-
-    res.sendFile(__dirname + "/public/editpost.html");
-});
-
-//Handling the edit post
-app.patch('/patch', function(req, res) {
-       
-    let query;
-    let values = [];
-    let post_id = req.body.post_id;
-
-    // We Patching both title and Body
-    if (req.body.title && req.body.body) {
-        query = 'UPDATE post SET title = ?, body = ? WHERE post_id = ?';
-        values = [req.body.title, req.body.body, req.body.post_id];
-    // We Patching only Title
-    } else if (req.body.title) {
-        query = 'UPDATE post SET title = ? WHERE post_id = ?';
-        values = [req.body.title, req.body.post_id];
-
-    // We Patching only Body
-    } else if (req.body.body) {
-        query = 'UPDATE post SET body = ? WHERE post_id = ?';
-        values = [req.body.body, req.body.post_id];
-    }
-
-   // Execute based on the different scenario
-   pool.query(query, values, (error, results) => {
-            if (error) {
-                res.status(500).json({ error: 'Error updating the post.' });
-
-            } else {
-                res.status(200).json({ message: 'Post updated successfully.' });
-
-            }
-        }
-    )
+    console.log(`METHOD: ${req.method}`);
+    let editPage = "/Public/editpost.html"
+    res.sendFile(__dirname + editPage);
+    console.log(`SERVE: ${editPage}`);
+    const status = 200;
+    console.log(`RES: ${status}`);
 });
 
 app.listen(port, function () {
