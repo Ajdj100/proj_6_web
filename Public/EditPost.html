@@ -154,8 +154,8 @@
                 const id = searchParams.get('id');
                 console.log(id);
                 const data = await getPost(id);
-                document.getElementById('postTitle').placeholder = data[0].title;     // Set article details
-                document.getElementById('postBody').placeholder = data[0].post_body;
+                document.getElementById('postTitle').value = data[0].title;     // Set article details
+                document.getElementById('postBody').value = data[0].post_body;
                 document.getElementById('postID').value = data[0].post_id;
     }
 
@@ -194,7 +194,6 @@
             }
 
     populateBrowser();
-
 </script>
 
 <html>
@@ -211,7 +210,7 @@
         </div>
 
     </div>
-    <h2>Edit Article</h2>
+    <h2 style="padding-top: 20px;">Edit Article</h2>
     
         <div id="postID"></div>
         <form id="post" action="" method="">
@@ -221,7 +220,7 @@
                 maxlength="1600" form="post" rows="18" oninput="checkInput('postBody')"></textarea>
         </form>
         <div id="buttonContainer">
-            <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Submit" disabled
+            <input type="submit" name="sendPostButton" id="sendPost" value="Save"
                 style="transition: all 0.5s" onclick="sendPost()">
         </div>
     </div>
