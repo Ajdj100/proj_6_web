@@ -29,15 +29,19 @@
     }
 
     body {
+        max-width: 1000px;
         margin: 0;
         padding: 0;
-        display: flex;
         justify-content: center;
         padding-top: 120px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    body > :last-child {
+        margin-left: auto;
     }
 
     #content {
