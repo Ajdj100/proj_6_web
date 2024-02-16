@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="./styles.css">
+<script src="./headerFuncs.js"></script>
 
 <style scoped>
     #headerContent {
@@ -28,15 +29,19 @@
     }
 
     body {
+        max-width: 800px;
         margin: 0;
         padding: 0;
-        display: flex;
         justify-content: center;
-        padding-top: 120px;
+        padding-top: 90px;
         margin: 0 auto;
         display: flex;
         flex-direction: column;
         align-items: center;
+    }
+
+    body > :last-child {
+        margin-left: auto;
     }
 
     #content {
@@ -108,12 +113,6 @@
 </style>
 
 <script>
-    function navigateTo(location) {
-        window.location.href = location;
-    }
-
-
-
     function checkInput(elementID) {
         let element = document.getElementById(elementID);
 
@@ -159,8 +158,8 @@
                 const id = searchParams.get('id');
                 console.log(id);
                 const data = await getPost(id);
-                document.getElementById('postTitle').placeholder = data[0].title;     // Set article details
-                document.getElementById('postBody').placeholder = data[0].post_body;
+                document.getElementById('postTitle').value = data[0].title;     // Set article details
+                document.getElementById('postBody').value = data[0].post_body;
                 document.getElementById('postID').value = data[0].post_id;
     }
 
@@ -177,7 +176,7 @@
                 "post_id": postID
             }
 
-        const res = await fetch(`http://localhost:8000/patch`, {
+        const res = await fetch(`http://localhost:8000/post`, {
             method: "PATCH",
             headers: {
                 "Content-Type": "application/json"
@@ -199,7 +198,6 @@
             }
 
     populateBrowser();
-
 </script>
 
 <html>
@@ -208,25 +206,24 @@
     <div id="header">
         <div id="headerContent">
 
-            <i class="bi bi-arrow-left-circle-fill" style="font-size: 3rem; cursor: pointer;"
-                onclick="navigateTo('Browse.html')"></i>
-            <h1>Website Title</h1>
-            <!-- <i class="bi bi-person-fill" style="font-size: 4rem; cursor: pointer;" onclick="showProfileOptions()"></i> -->
-            <a href="#" onclick="logout()">logout</a>
+            <i class="bi bi-arrow-left-circle-fill" style="font-size: 2.8rem; cursor: pointer;"
+                onclick="navigateTo('Profile')"></i>
+            <img src="./logo.png" style="height:70px; margin-bottom: 10px; margin-top: 10px;">
+            <i class="bi bi-box-arrow-left" style="font-size: 2.5rem; cursor: pointer;" onclick="logout()"></i>
         </div>
 
     </div>
-    <h2>Edit Article</h2>
+    <h2 style="padding-top: 20px;">Edit Article</h2>
     
         <div id="postID"></div>
         <form id="post" action="" method="">
-            <textarea id="postTitle"  name="title" spellcheck="true" maxlength="200" form="post"
+            <textarea id="postTitle" class="withContent" name="title" spellcheck="true" maxlength="200" form="post"
                 rows="3" oninput="checkInput('postTitle')"></textarea>
-            <textarea id="postBody"  name="body" spellcheck="true"
+            <textarea id="postBody" class="withContent" name="body" spellcheck="true"
                 maxlength="1600" form="post" rows="18" oninput="checkInput('postBody')"></textarea>
         </form>
         <div id="buttonContainer">
-            <input type="submit" class="disabledButton" name="sendPostButton" id="sendPost" value="Submit" disabled
+            <input type="submit" name="sendPostButton" id="sendPost" value="Save"
                 style="transition: all 0.5s" onclick="sendPost()">
         </div>
     </div>
