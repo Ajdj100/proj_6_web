@@ -136,7 +136,18 @@
                 content += "...";
             }
 
-            const body = `<div class="article" style="cursor: pointer;"><div class="articleBody" onclick="navigateTo('./Article.html?id=${element.post_id}')"><h2>${element.title}</h2><h4>${element.username}</h4><p>${content}</p></div> <i class="bi bi-x-lg deleteButton" style="font-size: 2rem; cursor: pointer;" onclick="deletePost(${element.post_id})"></i></div>`
+            const body = `
+            <div class="article" style="cursor: pointer;">
+                <div class="articleBody" onclick="navigateTo('./Article.html?id=${element.post_id}')">
+                    <h2>${element.title}</h2>
+                    <h4>${element.username}</h4>
+                    <p>${content}</p>
+                </div>
+                <div style="white-space: nowrap;">
+                <i class="bi bi-pen" style="font-size: 2rem; cursor: pointer;" onclick="navigateTo('./EditPost.html?id=${element.post_id}')"></i>
+                <i class="bi bi-x-lg deleteButton" style="font-size: 2rem; cursor: pointer;" onclick="deletePost(${element.post_id})"></i>
+                </div>
+            </div>`
             let row = table.insertRow();
             row.innerHTML = body;
         });

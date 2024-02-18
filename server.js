@@ -66,13 +66,12 @@ if (cluster.isMaster) {
 
     module.exports.pool = pool;
 
-    const postRoutes = require('./Routes/post');
-    const commentRoutes = require('./Routes/comment');
-    const postsRoutes = require('./Routes/posts');
-    const loginRoutes = require('./Routes/login');  //idk why this has an error, but the error doesnt actually exist
-    const signUpRoutes = require('./Routes/signup');
-    const profileRoutes = require('./Routes/profile');
-    // const signUpRoutes = require('./Routes/Signup');
+const postRoutes = require('./Routes/post');
+const commentRoutes = require('./Routes/comment');
+const postsRoutes = require('./Routes/posts');
+const loginRoutes = require('./Routes/login');
+const signUpRoutes = require('./Routes/signup');
+const profileRoutes = require('./Routes/profile');
 
     app.use('/post', postRoutes);
     app.use('/comment', commentRoutes);

@@ -1,9 +1,9 @@
-import mysql.connector
-from faker import Faker
-from dotenv import load_dotenv
 import os
 import sys
 
+import mysql.connector
+from dotenv import load_dotenv
+from faker import Faker
 
 if __name__ == "__main__":
     # Throw exception if no argument given
@@ -28,13 +28,13 @@ if __name__ == "__main__":
     # Seed Faker
     fake = Faker()
     Faker.seed()
-    def_passwd = "password"
+    passwd = "password"
     
     # Insert new users using random name and default password
     for i in range(user_count):
         insert_query = "INSERT INTO user (username, password) VALUES (%s, %s)"
-        tmp_username = fake.name()
-        values = (tmp_username, def_passwd)
+        username = fake.first_name()
+        values = (username, passwd)
         cursor.execute(insert_query, values)
         print(values)
     
