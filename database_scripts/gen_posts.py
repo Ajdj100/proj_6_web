@@ -1,10 +1,10 @@
-import mysql.connector
-from faker import Faker
-from dotenv import load_dotenv
-from random import choice
 import os
 import sys
+from random import choice
 
+import mysql.connector
+from dotenv import load_dotenv
+from faker import Faker
 
 if __name__ == "__main__":
     # Throw exception if no argument given
