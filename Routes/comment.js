@@ -9,7 +9,7 @@ router.put('/', function(req, res) {
     console.log(`METHOD: ${req.method}`);
     pool.query(
         'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
-        [req.body.body, req.body.comment_id, req.body.post],
+        [req.body.body, req.body.comment_id, req.body.post_id],
         (error, results) => {
             console.log(`QUERY: ${JSON.stringify(results, 0, 2)}`);
             let status = 0;
