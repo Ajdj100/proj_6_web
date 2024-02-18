@@ -5,7 +5,7 @@ var express = require('express'),
 const pool = require('../server.js').pool;
 
 //Handling the edit comment 
-router.patch('/', function(req, res) {
+router.put('/', function(req, res) {
     console.log(`METHOD: ${req.method}`);
     pool.query(
         'UPDATE comment SET body = ? WHERE comment_id = ? AND post_id = ?', 
